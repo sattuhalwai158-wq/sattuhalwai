@@ -79,12 +79,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "N-Sattu Cuisine | Royal Catering" },
-      { name: "description", content: "Royal wedding catering and artisanal mithai from Ajmer, Rajasthan." },
-      { name: "author", content: "N-Sattu Cuisine" },
+      { name: "theme-color", content: "#14110F" },
+      { title: "Wedding Caterers in Ajmer | N Sattu Cuisine" },
+      {
+        name: "description",
+        content:
+          "Premier wedding catering and authentic halwai services in Ajmer, Pushkar & Kishangarh by N Sattu Cuisine.",
+      },
+      { name: "author", content: "N Sattu Cuisine" },
+      { property: "og:site_name", content: "N Sattu Cuisine" },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "en_IN" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
@@ -93,7 +99,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap",
+      },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
@@ -123,7 +132,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Header />
-      <main><Outlet /></main>
+      <main>
+        <Outlet />
+      </main>
       <Footer />
       <Toaster richColors position="top-center" />
     </QueryClientProvider>

@@ -14,11 +14,19 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as BookingPolicyRouteImport } from './routes/booking-policy'
+import { Route as CateringKishangarhRouteImport } from './routes/catering-kishangarh'
+import { Route as HalwaiAjmerRouteImport } from './routes/halwai-ajmer'
 import { Route as MenusRouteImport } from './routes/menus'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RajasthaniCateringAjmerRouteImport } from './routes/rajasthani-catering-ajmer'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as SetupsRouteImport } from './routes/setups'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as WeddingCateringAjmerRouteImport } from './routes/wedding-catering-ajmer'
+import { Route as WeddingCateringPushkarRouteImport } from './routes/wedding-catering-pushkar'
+import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as BlogRajasthaniWeddingFoodMenuRouteImport } from './routes/blog/rajasthani-wedding-food-menu'
+import { Route as BlogWeddingCateringAjmerGuideRouteImport } from './routes/blog/wedding-catering-ajmer-guide'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -45,6 +53,16 @@ const BookingPolicyRoute = BookingPolicyRouteImport.update({
   path: '/booking-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CateringKishangarhRoute = CateringKishangarhRouteImport.update({
+  id: '/catering-kishangarh',
+  path: '/catering-kishangarh',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HalwaiAjmerRoute = HalwaiAjmerRouteImport.update({
+  id: '/halwai-ajmer',
+  path: '/halwai-ajmer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MenusRoute = MenusRouteImport.update({
   id: '/menus',
   path: '/menus',
@@ -53,6 +71,11 @@ const MenusRoute = MenusRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RajasthaniCateringAjmerRoute = RajasthaniCateringAjmerRouteImport.update({
+  id: '/rajasthani-catering-ajmer',
+  path: '/rajasthani-catering-ajmer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReviewsRoute = ReviewsRouteImport.update({
@@ -70,6 +93,33 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WeddingCateringAjmerRoute = WeddingCateringAjmerRouteImport.update({
+  id: '/wedding-catering-ajmer',
+  path: '/wedding-catering-ajmer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WeddingCateringPushkarRoute = WeddingCateringPushkarRouteImport.update({
+  id: '/wedding-catering-pushkar',
+  path: '/wedding-catering-pushkar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRajasthaniWeddingFoodMenuRoute =
+  BlogRajasthaniWeddingFoodMenuRouteImport.update({
+    id: '/blog/rajasthani-wedding-food-menu',
+    path: '/blog/rajasthani-wedding-food-menu',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const BlogWeddingCateringAjmerGuideRoute =
+  BlogWeddingCateringAjmerGuideRouteImport.update({
+    id: '/blog/wedding-catering-ajmer-guide',
+    path: '/blog/wedding-catering-ajmer-guide',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -77,11 +127,19 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/book': typeof BookRoute
   '/booking-policy': typeof BookingPolicyRoute
+  '/catering-kishangarh': typeof CateringKishangarhRoute
+  '/halwai-ajmer': typeof HalwaiAjmerRoute
   '/menus': typeof MenusRoute
   '/privacy': typeof PrivacyRoute
+  '/rajasthani-catering-ajmer': typeof RajasthaniCateringAjmerRoute
   '/reviews': typeof ReviewsRoute
   '/setups': typeof SetupsRoute
   '/terms': typeof TermsRoute
+  '/wedding-catering-ajmer': typeof WeddingCateringAjmerRoute
+  '/wedding-catering-pushkar': typeof WeddingCateringPushkarRoute
+  '/blog/rajasthani-wedding-food-menu': typeof BlogRajasthaniWeddingFoodMenuRoute
+  '/blog/wedding-catering-ajmer-guide': typeof BlogWeddingCateringAjmerGuideRoute
+  '/blog/': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,11 +147,19 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/book': typeof BookRoute
   '/booking-policy': typeof BookingPolicyRoute
+  '/catering-kishangarh': typeof CateringKishangarhRoute
+  '/halwai-ajmer': typeof HalwaiAjmerRoute
   '/menus': typeof MenusRoute
   '/privacy': typeof PrivacyRoute
+  '/rajasthani-catering-ajmer': typeof RajasthaniCateringAjmerRoute
   '/reviews': typeof ReviewsRoute
   '/setups': typeof SetupsRoute
   '/terms': typeof TermsRoute
+  '/wedding-catering-ajmer': typeof WeddingCateringAjmerRoute
+  '/wedding-catering-pushkar': typeof WeddingCateringPushkarRoute
+  '/blog/rajasthani-wedding-food-menu': typeof BlogRajasthaniWeddingFoodMenuRoute
+  '/blog/wedding-catering-ajmer-guide': typeof BlogWeddingCateringAjmerGuideRoute
+  '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,11 +168,19 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/book': typeof BookRoute
   '/booking-policy': typeof BookingPolicyRoute
+  '/catering-kishangarh': typeof CateringKishangarhRoute
+  '/halwai-ajmer': typeof HalwaiAjmerRoute
   '/menus': typeof MenusRoute
   '/privacy': typeof PrivacyRoute
+  '/rajasthani-catering-ajmer': typeof RajasthaniCateringAjmerRoute
   '/reviews': typeof ReviewsRoute
   '/setups': typeof SetupsRoute
   '/terms': typeof TermsRoute
+  '/wedding-catering-ajmer': typeof WeddingCateringAjmerRoute
+  '/wedding-catering-pushkar': typeof WeddingCateringPushkarRoute
+  '/blog/rajasthani-wedding-food-menu': typeof BlogRajasthaniWeddingFoodMenuRoute
+  '/blog/wedding-catering-ajmer-guide': typeof BlogWeddingCateringAjmerGuideRoute
+  '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -116,11 +190,19 @@ export interface FileRouteTypes {
     | '/admin'
     | '/book'
     | '/booking-policy'
+    | '/catering-kishangarh'
+    | '/halwai-ajmer'
     | '/menus'
     | '/privacy'
+    | '/rajasthani-catering-ajmer'
     | '/reviews'
     | '/setups'
     | '/terms'
+    | '/wedding-catering-ajmer'
+    | '/wedding-catering-pushkar'
+    | '/blog/rajasthani-wedding-food-menu'
+    | '/blog/wedding-catering-ajmer-guide'
+    | '/blog/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,11 +210,19 @@ export interface FileRouteTypes {
     | '/admin'
     | '/book'
     | '/booking-policy'
+    | '/catering-kishangarh'
+    | '/halwai-ajmer'
     | '/menus'
     | '/privacy'
+    | '/rajasthani-catering-ajmer'
     | '/reviews'
     | '/setups'
     | '/terms'
+    | '/wedding-catering-ajmer'
+    | '/wedding-catering-pushkar'
+    | '/blog/rajasthani-wedding-food-menu'
+    | '/blog/wedding-catering-ajmer-guide'
+    | '/blog'
   id:
     | '__root__'
     | '/'
@@ -140,11 +230,19 @@ export interface FileRouteTypes {
     | '/admin'
     | '/book'
     | '/booking-policy'
+    | '/catering-kishangarh'
+    | '/halwai-ajmer'
     | '/menus'
     | '/privacy'
+    | '/rajasthani-catering-ajmer'
     | '/reviews'
     | '/setups'
     | '/terms'
+    | '/wedding-catering-ajmer'
+    | '/wedding-catering-pushkar'
+    | '/blog/rajasthani-wedding-food-menu'
+    | '/blog/wedding-catering-ajmer-guide'
+    | '/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -153,11 +251,19 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   BookRoute: typeof BookRoute
   BookingPolicyRoute: typeof BookingPolicyRoute
+  CateringKishangarhRoute: typeof CateringKishangarhRoute
+  HalwaiAjmerRoute: typeof HalwaiAjmerRoute
   MenusRoute: typeof MenusRoute
   PrivacyRoute: typeof PrivacyRoute
+  RajasthaniCateringAjmerRoute: typeof RajasthaniCateringAjmerRoute
   ReviewsRoute: typeof ReviewsRoute
   SetupsRoute: typeof SetupsRoute
   TermsRoute: typeof TermsRoute
+  WeddingCateringAjmerRoute: typeof WeddingCateringAjmerRoute
+  WeddingCateringPushkarRoute: typeof WeddingCateringPushkarRoute
+  BlogRajasthaniWeddingFoodMenuRoute: typeof BlogRajasthaniWeddingFoodMenuRoute
+  BlogWeddingCateringAjmerGuideRoute: typeof BlogWeddingCateringAjmerGuideRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -197,6 +303,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/catering-kishangarh': {
+      id: '/catering-kishangarh'
+      path: '/catering-kishangarh'
+      fullPath: '/catering-kishangarh'
+      preLoaderRoute: typeof CateringKishangarhRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/halwai-ajmer': {
+      id: '/halwai-ajmer'
+      path: '/halwai-ajmer'
+      fullPath: '/halwai-ajmer'
+      preLoaderRoute: typeof HalwaiAjmerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/menus': {
       id: '/menus'
       path: '/menus'
@@ -209,6 +329,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rajasthani-catering-ajmer': {
+      id: '/rajasthani-catering-ajmer'
+      path: '/rajasthani-catering-ajmer'
+      fullPath: '/rajasthani-catering-ajmer'
+      preLoaderRoute: typeof RajasthaniCateringAjmerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reviews': {
@@ -232,6 +359,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wedding-catering-ajmer': {
+      id: '/wedding-catering-ajmer'
+      path: '/wedding-catering-ajmer'
+      fullPath: '/wedding-catering-ajmer'
+      preLoaderRoute: typeof WeddingCateringAjmerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wedding-catering-pushkar': {
+      id: '/wedding-catering-pushkar'
+      path: '/wedding-catering-pushkar'
+      fullPath: '/wedding-catering-pushkar'
+      preLoaderRoute: typeof WeddingCateringPushkarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/rajasthani-wedding-food-menu': {
+      id: '/blog/rajasthani-wedding-food-menu'
+      path: '/blog/rajasthani-wedding-food-menu'
+      fullPath: '/blog/rajasthani-wedding-food-menu'
+      preLoaderRoute: typeof BlogRajasthaniWeddingFoodMenuRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/wedding-catering-ajmer-guide': {
+      id: '/blog/wedding-catering-ajmer-guide'
+      path: '/blog/wedding-catering-ajmer-guide'
+      fullPath: '/blog/wedding-catering-ajmer-guide'
+      preLoaderRoute: typeof BlogWeddingCateringAjmerGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -241,11 +403,19 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   BookRoute: BookRoute,
   BookingPolicyRoute: BookingPolicyRoute,
+  CateringKishangarhRoute: CateringKishangarhRoute,
+  HalwaiAjmerRoute: HalwaiAjmerRoute,
   MenusRoute: MenusRoute,
   PrivacyRoute: PrivacyRoute,
+  RajasthaniCateringAjmerRoute: RajasthaniCateringAjmerRoute,
   ReviewsRoute: ReviewsRoute,
   SetupsRoute: SetupsRoute,
   TermsRoute: TermsRoute,
+  WeddingCateringAjmerRoute: WeddingCateringAjmerRoute,
+  WeddingCateringPushkarRoute: WeddingCateringPushkarRoute,
+  BlogRajasthaniWeddingFoodMenuRoute: BlogRajasthaniWeddingFoodMenuRoute,
+  BlogWeddingCateringAjmerGuideRoute: BlogWeddingCateringAjmerGuideRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -55,7 +55,10 @@ export function useContent() {
     queryFn: async () => {
       const { data, error } = await supabase.from("page_content").select("key,value");
       if (error) throw error;
-      return Object.fromEntries((data ?? []).map((r) => [r.key, r.value])) as Record<string, string>;
+      return Object.fromEntries((data ?? []).map((r) => [r.key, r.value])) as Record<
+        string,
+        string
+      >;
     },
   });
   return (key: string, fallback: string) => q.data?.[key] || fallback;

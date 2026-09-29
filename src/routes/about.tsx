@@ -3,7 +3,8 @@ import { MapPin, ShieldCheck, Wheat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageIntro } from "@/components/site-shell";
 import { images } from "@/lib/content";
-import { pageMeta } from "@/components/seo";
+import { buildPageHead, buildBreadcrumbSchema } from "@/components/seo";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { useMedia } from "@/lib/site-data";
 
 const founders = [
@@ -35,10 +36,14 @@ const founders = [
 
 export const Route = createFileRoute("/about")({
   head: () =>
-    pageMeta(
-      "About Us & Founders | N-Sattu Cuisine",
-      "Discover N Sattu Cuisine’s authentic home-style flavors passed down through generations and our visionary founders."
-    ),
+    buildPageHead({
+      title: "About N Sattu Cuisine | 10+ Years of Catering Heritage in Ajmer",
+      description:
+        "Meet founder Nathu Ji Prajapati, MD Satyanarayan Prajapati & CEO Chanchal Prajapati. Discover over a decade of authentic halwai mastery and royal wedding catering in Ajmer.",
+      path: "/about",
+      ogImage: "/media/buffet-17.jpg",
+      structuredData: [buildBreadcrumbSchema([{ name: "About Us", path: "/about" }])],
+    }),
   component: About,
 });
 
@@ -57,6 +62,12 @@ function About() {
         title="A legacy tempered over generations."
         copy="At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have been passed down through generations, crafting exquisite dishes for grand weddings and intimate celebrations."
       />
+
+      <div className="border-b border-border bg-secondary/40 px-5 py-4 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <Breadcrumbs items={[{ label: "About Us" }]} />
+        </div>
+      </div>
 
       {/* ABOUT US SECTION */}
       <section className="px-5 py-20 lg:px-8">
@@ -78,13 +89,19 @@ function About() {
             </div>
           </div>
           <div className="flex flex-col justify-center">
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-gold">About Us • हमारे बारे में</p>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-gold">
+              About Us • हमारे बारे में
+            </p>
             <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
               Authentic, home-style flavors passed down through generations.
             </h2>
             <div className="mt-5 h-px w-20 bg-gold" />
             <p className="mt-7 text-lg leading-8 text-muted-foreground">
-              At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have been passed down through generations. We are committed to making every event memorable with delectable dishes crafted from the finest ingredients. Whether it's a grand wedding, a corporate gathering, or an intimate celebration, we deliver exceptional food and unmatched service, tailored to your needs.
+              At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have
+              been passed down through generations. We are committed to making every event memorable
+              with delectable dishes crafted from the finest ingredients. Whether it's a grand
+              wedding, a corporate gathering, or an intimate celebration, we deliver exceptional
+              food and unmatched service, tailored to your needs.
             </p>
             <blockquote className="mt-6 border-l-2 border-gold bg-secondary/50 p-5 font-display text-xl italic text-foreground">
               “Let us make your special moments even more delightful with our exquisite cuisine!”
@@ -96,7 +113,10 @@ function About() {
               ].map(([Icon, t]) => {
                 const I = Icon as typeof ShieldCheck;
                 return (
-                  <div key={String(t)} className="border-l border-primary bg-background p-5 shadow-soft">
+                  <div
+                    key={String(t)}
+                    className="border-l border-primary bg-background p-5 shadow-soft"
+                  >
                     <I className="text-primary" />
                     <p className="mt-4 font-display text-2xl">{String(t)}</p>
                   </div>
@@ -111,11 +131,14 @@ function About() {
       <section className="border-y border-border bg-secondary px-5 py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-gold">Founders • संस्थापक</p>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-gold">
+              Founders • संस्थापक
+            </p>
             <h2 className="mt-3 font-display text-4xl sm:text-5xl">FOUNDERS</h2>
             <div className="mx-auto mt-4 h-px w-20 bg-gold" />
             <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-              Carrying forward the richness of culinary heritage with authenticity, passion, and perfection.
+              Carrying forward the richness of culinary heritage with authenticity, passion, and
+              perfection.
             </p>
           </div>
 
@@ -138,7 +161,9 @@ function About() {
                   </h3>
 
                   <div className="mt-6">
-                    <span className="font-display text-4xl leading-none text-gold select-none">“</span>
+                    <span className="font-display text-4xl leading-none text-gold select-none">
+                      “
+                    </span>
                     <blockquote className="mt-1 text-base italic leading-7 text-muted-foreground">
                       {founder.quote.replace(/^[“”"]|[“”"]$/g, "")}
                     </blockquote>
@@ -146,7 +171,9 @@ function About() {
                 </div>
 
                 <div className="mt-8 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
-                  <span className="font-semibold uppercase tracking-widest text-gold">N Sattu Cuisine</span>
+                  <span className="font-semibold uppercase tracking-widest text-gold">
+                    N Sattu Cuisine
+                  </span>
                   <span>{founder.nameHi}</span>
                 </div>
               </div>
@@ -161,7 +188,8 @@ function About() {
           <p className="text-xs font-bold uppercase text-primary">Our philosophy</p>
           <h2 className="mt-4 font-display text-5xl">स्वाद और विश्वास</h2>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">
-            Taste with trust means strict hygiene, non-adulterated dairy, in-house slow-roasted mawa, Californian almonds and Afghani anjeer—handled with reverence.
+            Taste with trust means strict hygiene, non-adulterated dairy, in-house slow-roasted
+            mawa, Californian almonds and Afghani anjeer—handled with reverence.
           </p>
           <div className="mt-14 grid gap-4 md:grid-cols-3">
             {[

@@ -1,5 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
-import { pageMeta } from "@/components/seo";
-export const Route=createFileRoute("/privacy")({head:()=>pageMeta("Privacy Policy | N-Sattu Cuisine","How N-Sattu Cuisine handles information shared through catering inquiries."),component:Privacy});
-function Privacy(){return <LegalPage title="Privacy policy" intro="We respect the personal details families share while planning a celebration." sections={[{heading:"Information you share",body:"We may receive your name, contact details, event date, destination, guest count and menu preferences when you contact us or submit an inquiry."},{heading:"How information is used",body:"Information is used only to respond to your request, prepare a proposal, coordinate tastings and deliver agreed catering services. We do not sell personal information."},{heading:"Service providers",body:"Information may be shared with trusted service providers only where necessary to operate inquiry forms, communications or event delivery, and subject to appropriate safeguards."},{heading:"Your choices",body:"You may ask us to correct or delete inquiry information by contacting our team. Some records may be retained where required for legal, accounting or contractual purposes."}]}/>}
+import { buildPageHead, buildBreadcrumbSchema } from "@/components/seo";
+
+export const Route = createFileRoute("/privacy")({
+  head: () =>
+    buildPageHead({
+      title: "Privacy Policy | N Sattu Cuisine",
+      description:
+        "Privacy policy outlining how catering inquiry and contact details are securely handled by N Sattu Cuisine in Ajmer.",
+      path: "/privacy",
+      structuredData: [buildBreadcrumbSchema([{ name: "Privacy Policy", path: "/privacy" }])],
+    }),
+  component: Privacy,
+});
+function Privacy() {
+  return (
+    <LegalPage
+      title="Privacy policy"
+      intro="We respect the personal details families share while planning a celebration."
+      sections={[
+        {
+          heading: "Information you share",
+          body: "We may receive your name, contact details, event date, destination, guest count and menu preferences when you contact us or submit an inquiry.",
+        },
+        {
+          heading: "How information is used",
+          body: "Information is used only to respond to your request, prepare a proposal, coordinate tastings and deliver agreed catering services. We do not sell personal information.",
+        },
+        {
+          heading: "Service providers",
+          body: "Information may be shared with trusted service providers only where necessary to operate inquiry forms, communications or event delivery, and subject to appropriate safeguards.",
+        },
+        {
+          heading: "Your choices",
+          body: "You may ask us to correct or delete inquiry information by contacting our team. Some records may be retained where required for legal, accounting or contractual purposes.",
+        },
+      ]}
+    />
+  );
+}
