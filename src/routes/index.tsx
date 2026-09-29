@@ -68,7 +68,57 @@ function Index() {
       <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-1">{slides.map((_, index) => <button key={index} aria-label={`Show image ${index + 1}`} onClick={() => setSlide(index)} className="grid size-9 place-items-center"><span className={`block h-px transition-all ${slide === index ? "w-8 bg-gold" : "w-4 bg-hero-foreground/70"}`}/></button>)}</div>
     </section>
 
-    <section className="border-b border-border bg-background px-6 py-24 lg:py-32"><div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]"><div className="relative aspect-[4/5] overflow-hidden border border-gold/30 bg-secondary p-3"><img src={images.masterHalwai} alt="N-Sattu Cuisine team preparing a royal celebration" className="size-full object-cover"/><div className="absolute inset-x-8 bottom-8 bg-background/95 p-5 shadow-soft"><p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">10+ years of craft • 10+ साल का अनुभव</p><p className="mt-2 font-display text-2xl">Ajmer • Pushkar • Kishangarh</p></div></div><div><p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">Our story • हमारी कहानी</p><h2 className="mt-4 max-w-xl font-display text-4xl leading-tight sm:text-5xl">A family-led legacy of royal hospitality.</h2><div className="mt-5 h-px w-20 bg-gold"/><p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground">Founder and Master Craftsman Satyanarayan Prajapati leads every celebration with the precision of Rajasthan’s halwai tradition. Co-founder Karan carries that vision forward through thoughtful planning, presentation and guest care.</p><div className="mt-9 grid gap-4 sm:grid-cols-2"><div className="border-l-2 border-gold bg-secondary p-5"><p className="text-xs font-semibold uppercase text-primary">Founder • संस्थापक</p><h3 className="mt-2 font-display text-2xl">Satyanarayan Prajapati</h3><p className="mt-1 text-sm text-muted-foreground">Master Craftsman</p></div><div className="border-l-2 border-gold bg-secondary p-5"><p className="text-xs font-semibold uppercase text-primary">Co-founder • सह-संस्थापक</p><h3 className="mt-2 font-display text-2xl">Karan</h3><p className="mt-1 text-sm text-muted-foreground">Celebration Planning & Hospitality</p></div></div><Button variant="regalOutline" className="mt-8" asChild><Link to="/about">Read our heritage <ArrowRight/></Link></Button></div></div></section>
+    <section className="border-b border-border bg-background px-6 py-24 lg:py-32">
+      <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="relative aspect-[4/5] overflow-hidden border border-gold/30 bg-secondary p-3">
+          <img
+            src={images.masterHalwai}
+            alt="N-Sattu Cuisine team preparing a royal celebration"
+            className="size-full object-cover"
+          />
+          <div className="absolute inset-x-8 bottom-8 border-l-2 border-gold bg-background/95 p-5 shadow-soft">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+              Authentic & Heritage • प्रामाणिक परंपरा
+            </p>
+            <p className="mt-2 font-display text-2xl">Ajmer • Pushkar • Kishangarh</p>
+          </div>
+        </div>
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">
+            Our story • हमारी कहानी
+          </p>
+          <h2 className="mt-4 max-w-xl font-display text-4xl leading-tight sm:text-5xl">
+            A family-led legacy of royal hospitality.
+          </h2>
+          <div className="mt-5 h-px w-20 bg-gold" />
+          <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground">
+            At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have been passed down through generations. We are committed to making every event memorable with delectable dishes crafted from the finest ingredients and unmatched service tailored to your needs.
+          </p>
+          <div className="mt-9 grid gap-4 sm:grid-cols-3">
+            <div className="border-l-2 border-gold bg-secondary p-4">
+              <p className="text-[11px] font-semibold uppercase text-primary">Founder • संस्थापक</p>
+              <h3 className="mt-2 font-display text-xl">Nathu Ji Prajapati</h3>
+              <p className="mt-1 text-xs text-muted-foreground">Culinary Traditions</p>
+            </div>
+            <div className="border-l-2 border-gold bg-secondary p-4">
+              <p className="text-[11px] font-semibold uppercase text-primary">Managing Director • MD</p>
+              <h3 className="mt-2 font-display text-xl">Satyanarayan Prajapati</h3>
+              <p className="mt-1 text-xs text-muted-foreground">Quality & Authenticity</p>
+            </div>
+            <div className="border-l-2 border-gold bg-secondary p-4">
+              <p className="text-[11px] font-semibold uppercase text-primary">CEO • मुख्य कार्यकारी</p>
+              <h3 className="mt-2 font-display text-xl">Chanchal Prajapati</h3>
+              <p className="mt-1 text-xs text-muted-foreground">Exquisite Celebrations</p>
+            </div>
+          </div>
+          <Button variant="regalOutline" className="mt-8" asChild>
+            <Link to="/about">
+              Read our heritage <ArrowRight />
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </section>
 
     <section className="px-6 py-24 lg:py-32"><div className="mx-auto max-w-7xl"><SectionTitle eyebrow="Signature creations • खास पकवान" title="Crafted for the royal table." copy="Handmade in pure desi ghee by our master halwais — the dishes our hosts remember long after the wedding."/><div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{featured.map(f => <ImageCard key={f.key} to="/menus" image={f.image} title={f.title} label={f.label} position={f.position}/>)}</div></div></section>
 
