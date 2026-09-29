@@ -5,11 +5,11 @@ const banquet = "/media/buffet-6.jpg";
 
 export const navItems = [
   { label: "Home", hi: "होम", to: "/" },
-  { label: "Heritage", hi: "हमारी कहानी", to: "/about" },
   { label: "Menus", hi: "मेन्यू", to: "/menus" },
   { label: "Luxury Setups", hi: "सजावट", to: "/setups" },
   { label: "Reviews & FAQ", hi: "राय और सवाल", to: "/reviews" },
   { label: "Book Event", hi: "बुकिंग", to: "/book" },
+  { label: "About", hi: "हमारी कहानी", to: "/about" },
 ] as const;
 
 export const images = { delicacies, liveCounter, masterHalwai, banquet };
