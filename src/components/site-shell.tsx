@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/nsattu-logo.png";
-import { Instagram, MapPin, Menu, Phone, Youtube } from "lucide-react";
+import { Instagram, MapPin, Menu, Phone, Youtube, ArrowRight } from "lucide-react";
+const logo = "/media/brand-logo.webp";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,138 +10,162 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { navItems } from "@/lib/content";
+import { BUSINESS_CONFIG as business } from "@/lib/site-config";
 
-function Brand({ large = false }: { large?: boolean }) {
+const navigation = [
+  { label: "Home", to: "/" },
+  { label: "Our story", to: "/about" },
+  { label: "Menus", to: "/menus" },
+  { label: "Catering setups", to: "/setups" },
+  { label: "Reviews & FAQ", to: "/reviews" },
+] as const;
+const serviceLinks = [
+  ["Ajmer weddings", "/wedding-catering-ajmer"],
+  ["Pushkar weddings", "/wedding-catering-pushkar"],
+  ["Kishangarh catering", "/catering-kishangarh"],
+  ["Rajasthani cuisine", "/rajasthani-catering-ajmer"],
+  ["Traditional halwai", "/halwai-ajmer"],
+] as const;
+
+function Brand() {
   return (
-    <Link to="/" aria-label="N-Sattu Cuisine home" className="inline-flex items-center">
-      <img
-        src={logo}
-        alt="N-Sattu Cuisine logo - Wedding Caterers in Ajmer"
-        width={520}
-        height={429}
-        className={large ? "h-24 w-auto drop-shadow-sm" : "h-14 w-auto drop-shadow-sm sm:h-16"}
-      />
+    <Link to="/" aria-label="N-Sattu Cuisine home" className="flex shrink-0 items-center gap-3">
+      <img src={logo} alt="" width={520} height={429} className="h-14 w-auto" />
+      <span className="hidden sm:block">
+        <span className="block font-display text-xl font-semibold text-primary">
+          N-Sattu Cuisine
+        </span>
+        <span className="block text-[9px] uppercase tracking-[.2em] text-muted-foreground">
+          The warmth of Rajasthan
+        </span>
+      </span>
     </Link>
   );
 }
 
-const localServiceLinks = [
-  { label: "Wedding Catering Ajmer", to: "/wedding-catering-ajmer" as const },
-  { label: "Wedding Catering Pushkar", to: "/wedding-catering-pushkar" as const },
-  { label: "Catering in Kishangarh", to: "/catering-kishangarh" as const },
-  { label: "Rajasthani Catering Ajmer", to: "/rajasthani-catering-ajmer" as const },
-  { label: "Master Halwai in Ajmer", to: "/halwai-ajmer" as const },
-  { label: "Catering Planning Blog", to: "/blog" as const },
-];
-
 export function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-background/95 shadow-soft backdrop-blur-xl">
-      <div className="hidden h-8 bg-obsidian md:block">
-        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-8 text-[10px] font-semibold tracking-wide text-primary">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-background/95 backdrop-blur-lg">
+      <div className="hidden h-8 bg-primary text-primary-foreground md:block">
+        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-8 text-[11px]">
           <span className="flex items-center gap-2">
             <MapPin className="size-3" />
-            Ajmer, Pushkar & Kishangarh, Rajasthan
+            Ajmer · Pushkar · Kishangarh
           </span>
-          <span>+91 94604 26952 · +91 99506 11631 · @sattu__halwai</span>
+          <a
+            href={`tel:${business.telephone.replace(/\s/g, "")}`}
+            className="inline-flex h-8 items-center gap-2"
+          >
+            <Phone className="size-3" />
+            {business.telephone}
+          </a>
         </div>
       </div>
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-5 lg:px-8">
         <Brand />
-        <nav className="hidden items-center gap-5 lg:flex">
-          {navItems.map((item) => (
+        <nav aria-label="Main navigation" className="hidden items-center gap-5 xl:flex">
+          {navigation.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className="text-[11px] font-semibold uppercase text-muted-foreground transition-colors hover:text-primary"
-              activeProps={{ className: "text-primary" }}
+              activeOptions={{ exact: item.to === "/" }}
+              className="py-3 text-xs font-semibold text-muted-foreground hover:text-primary"
+              activeProps={{ className: "text-primary underline underline-offset-8" }}
             >
               {item.label}
             </Link>
           ))}
           <Link
-            to="/blog"
-            className="text-[11px] font-semibold uppercase text-muted-foreground transition-colors hover:text-primary"
-            activeProps={{ className: "text-primary" }}
+            to="/setups"
+            hash="gallery"
+            className="py-3 text-xs font-semibold text-muted-foreground hover:text-primary"
           >
-            Blog
+            Gallery
+          </Link>
+          <Link
+            to="/book"
+            hash="contact"
+            className="py-3 text-xs font-semibold text-muted-foreground hover:text-primary"
+          >
+            Contact
           </Link>
         </nav>
-        <div className="hidden items-center gap-2 lg:flex">
-          <Button variant="ghost" size="sm" asChild>
-            <a href="tel:+919460426952">
-              <Phone /> Call
-            </a>
+        <div className="flex items-center gap-2">
+          <Button variant="royal" asChild className="hidden sm:inline-flex">
+            <Link to="/book">
+              Plan your event <ArrowRight />
+            </Link>
           </Button>
-          <Button variant="royal" size="sm" asChild>
-            <Link to="/book">Book catering • बुक करें</Link>
-          </Button>
-        </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="regalOutline"
-              size="icon"
-              className="lg:hidden"
-              aria-label="Open navigation"
-            >
-              <Menu />
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="border-border bg-background overflow-y-auto">
-            <SheetTitle className="sr-only">Navigation</SheetTitle>
-            <SheetDescription className="sr-only">Explore N-Sattu Cuisine</SheetDescription>
-            <div className="mb-8">
-              <Brand />
-            </div>
-            <nav className="flex flex-col">
-              {navItems.map((item, i) => (
-                <SheetClose asChild key={item.to}>
-                  <Link
-                    to={item.to}
-                    className="border-b border-border py-4 font-display text-2xl text-foreground"
-                  >
-                    <span className="mr-3 font-sans text-xs text-primary">0{i + 1}</span>
-                    {item.label}
-                    <span className="ml-3 font-sans text-xs text-muted-foreground">{item.hi}</span>
-                  </Link>
-                </SheetClose>
-              ))}
-              <SheetClose asChild>
-                <Link
-                  to="/blog"
-                  className="border-b border-border py-4 font-display text-2xl text-foreground"
-                >
-                  <span className="mr-3 font-sans text-xs text-primary">07</span>
-                  Blog & Guides
-                  <span className="ml-3 font-sans text-xs text-muted-foreground">लेख</span>
-                </Link>
-              </SheetClose>
-            </nav>
-
-            <div className="mt-6">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-primary mb-3">
-                Service Areas
-              </p>
-              <div className="grid gap-2 text-xs">
-                {localServiceLinks.map((link) => (
-                  <SheetClose asChild key={link.to}>
-                    <Link to={link.to} className="text-muted-foreground hover:text-primary">
-                      {link.label}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="xl:hidden"
+                aria-label="Open navigation"
+              >
+                <Menu />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="overflow-y-auto bg-background p-6">
+              <SheetTitle className="font-display text-2xl text-primary">
+                N-Sattu Cuisine
+              </SheetTitle>
+              <SheetDescription>Explore our cuisine and plan your celebration.</SheetDescription>
+              <nav aria-label="Mobile navigation" className="mt-5 flex flex-col">
+                {navigation.map((item) => (
+                  <SheetClose key={item.to} asChild>
+                    <Link
+                      to={item.to}
+                      activeOptions={{ exact: item.to === "/" }}
+                      activeProps={{ className: "text-primary" }}
+                      className="border-b border-border py-4 font-display text-2xl"
+                    >
+                      {item.label}
                     </Link>
                   </SheetClose>
                 ))}
-              </div>
-            </div>
-
-            <Button className="mt-8 w-full" variant="royal" asChild>
-              <a href="tel:+919460426952">
-                <Phone /> +91 94604 26952
+                <SheetClose asChild>
+                  <Link
+                    to="/setups"
+                    hash="gallery"
+                    className="border-b border-border py-4 font-display text-2xl"
+                  >
+                    Gallery
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    to="/book"
+                    hash="contact"
+                    className="border-b border-border py-4 font-display text-2xl"
+                  >
+                    Contact
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link to="/blog" className="border-b border-border py-4 font-display text-2xl">
+                    Planning journal
+                  </Link>
+                </SheetClose>
+              </nav>
+              <SheetClose asChild>
+                <Button variant="royal" className="mt-6" asChild>
+                  <Link to="/book">
+                    Plan your event <ArrowRight />
+                  </Link>
+                </Button>
+              </SheetClose>
+              <a
+                href={`tel:${business.telephone.replace(/\s/g, "")}`}
+                className="mt-6 flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"
+              >
+                <Phone className="size-4" />
+                {business.telephone}
               </a>
-            </Button>
-          </SheetContent>
-        </Sheet>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
@@ -149,112 +173,100 @@ export function Header() {
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-muted">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:grid-cols-2 lg:grid-cols-5 lg:px-8">
-        <div className="lg:col-span-2">
-          <Brand large />
-          <p className="mt-5 text-sm leading-7 text-muted-foreground max-w-sm">
-            Royal Rajasthani wedding feasts, artisanal mithai in pure desi ghee, and theatrical live
-            counters for celebrations across Ajmer, Pushkar & Kishangarh.
+    <footer className="border-t border-border bg-secondary">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.1fr] lg:px-8">
+        <div>
+          <Brand />
+          <p className="mt-5 max-w-xs text-sm leading-7 text-muted-foreground">
+            Rajasthani wedding dining, handcrafted mithai and live counters. Prepared with care,
+            served with warmth.
           </p>
-          <div className="mt-5 flex gap-4">
+          <div className="mt-4 flex gap-2">
             <a
-              href="https://instagram.com/sattu__halwai"
+              href={business.socialLinks.instagram}
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram"
-              className="text-primary hover:text-gold transition-colors"
+              className="grid size-11 place-items-center text-primary"
             >
               <Instagram />
             </a>
             <a
-              href="https://youtube.com/@SattuhalwaiAjmer"
+              href={business.socialLinks.youtube}
               target="_blank"
               rel="noreferrer"
               aria-label="YouTube"
-              className="text-primary hover:text-gold transition-colors"
+              className="grid size-11 place-items-center text-primary"
             >
               <Youtube />
             </a>
           </div>
         </div>
-
         <div>
-          <p className="mb-5 text-xs font-bold uppercase text-berry tracking-wider">Explore</p>
-          <div className="grid gap-3 text-sm">
-            {navItems.slice(1).map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
+          <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Explore</h2>
+          <nav aria-label="Footer navigation" className="mt-4 grid text-sm text-muted-foreground">
+            {navigation.slice(1).map((item) => (
+              <Link key={item.to} to={item.to} className="py-2.5 hover:text-primary">
                 {item.label}
               </Link>
             ))}
-            <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors">
-              Planning Blog
+            <Link to="/blog" className="py-2.5 hover:text-primary">
+              Planning journal
             </Link>
-          </div>
+            <Link to="/setups" hash="gallery" className="py-2.5 hover:text-primary">
+              Gallery
+            </Link>
+          </nav>
         </div>
-
         <div>
-          <p className="mb-5 text-xs font-bold uppercase text-berry tracking-wider">
-            Service Areas
-          </p>
-          <div className="grid gap-2.5 text-xs">
-            {localServiceLinks.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                {item.label}
+          <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Our region</h2>
+          <nav aria-label="Catering services" className="mt-4 grid text-sm text-muted-foreground">
+            {serviceLinks.map(([label, to]) => (
+              <Link key={to} to={to} className="py-2.5 hover:text-primary">
+                {label}
               </Link>
             ))}
-          </div>
+          </nav>
         </div>
-
         <div>
-          <p className="mb-5 text-xs font-bold uppercase text-berry tracking-wider">Concierge</p>
-          <a className="block text-sm text-foreground font-medium" href="tel:+919460426952">
-            +91 94604 26952
-          </a>
-          <a className="mt-2 block text-sm text-foreground font-medium" href="tel:+919950611631">
-            +91 99506 11631
-          </a>
-          <p className="mt-3 text-xs text-muted-foreground leading-5">
-            Ajmer, Pushkar & Kishangarh, Rajasthan
+          <h2 className="text-xs font-bold uppercase tracking-widest text-primary">
+            Let’s plan together
+          </h2>
+          {[business.telephone, business.secondaryTelephone].map((phone) => (
+            <a
+              key={phone}
+              href={`tel:${phone.replace(/\s/g, "")}`}
+              className="mt-3 flex min-h-11 items-center font-semibold text-primary"
+            >
+              {phone}
+            </a>
+          ))}
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">
+            Ajmer, Rajasthan
             <br />
             Consultations by appointment
           </p>
-          <div className="mt-4">
-            <Link
-              to="/book"
-              className="inline-block text-xs font-semibold text-primary underline underline-offset-4"
-            >
-              Request Catering Proposal →
+          <Button variant="regalOutline" className="mt-5" asChild>
+            <Link to="/book">
+              Discuss your event <ArrowRight />
             </Link>
-          </div>
+          </Button>
         </div>
       </div>
-
       <div className="border-t border-border px-5 py-5 text-xs text-muted-foreground">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4">
-          <span>© 2026 N-Sattu Cuisine (Sattu Halwai). All rights reserved.</span>
-          <span className="flex flex-wrap gap-4">
-            <Link to="/wedding-catering-ajmer" className="hover:text-primary">
-              Ajmer Catering
-            </Link>
-            <Link to="/privacy" className="hover:text-primary">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
+          <span>© {new Date().getFullYear()} N-Sattu Cuisine (Sattu Halwai).</span>
+          <nav aria-label="Legal" className="flex flex-wrap gap-5">
+            <Link to="/privacy" className="py-3 hover:text-primary">
               Privacy
             </Link>
-            <Link to="/terms" className="hover:text-primary">
+            <Link to="/terms" className="py-3 hover:text-primary">
               Terms
             </Link>
-            <Link to="/booking-policy" className="hover:text-primary">
+            <Link to="/booking-policy" className="py-3 hover:text-primary">
               Booking policy
             </Link>
-          </span>
+          </nav>
         </div>
       </div>
     </footer>
@@ -271,14 +283,14 @@ export function PageIntro({
   copy: string;
 }) {
   return (
-    <section className="palace-grid border-b border-border px-5 pb-16 pt-36 md:pt-44 lg:px-8 lg:pb-24">
-      <div className="mx-auto max-w-7xl animate-rise">
-        <p className="mb-5 font-display text-lg italic text-primary">{eyebrow}</p>
-        <h1 className="max-w-4xl font-display text-5xl leading-none text-foreground sm:text-6xl lg:text-8xl">
-          {title}
-        </h1>
-        <div className="mt-6 h-px w-24 bg-gold" />
-        <p className="mt-7 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
+    <section className="page-intro border-b border-border px-5 pb-12 pt-32 md:pb-16 md:pt-44 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <p className="mb-5 text-xs font-semibold uppercase tracking-[.16em] text-primary">
+          {eyebrow}
+        </p>
+        <h1 className="max-w-4xl font-display text-foreground">{title}</h1>
+        <div className="mt-6 h-px w-20 bg-gold" />
+        <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
           {copy}
         </p>
       </div>

@@ -67,6 +67,7 @@ export type Database = {
       };
       site_items: {
         Row: {
+          published: boolean;
           created_at: string;
           data: Json;
           id: string;
@@ -74,6 +75,7 @@ export type Database = {
           sort_order: number;
         };
         Insert: {
+          published?: boolean;
           created_at?: string;
           data?: Json;
           id?: string;
@@ -81,6 +83,7 @@ export type Database = {
           sort_order?: number;
         };
         Update: {
+          published?: boolean;
           created_at?: string;
           data?: Json;
           id?: string;
@@ -91,6 +94,8 @@ export type Database = {
       };
       site_media: {
         Row: {
+          published: boolean;
+          alt_text: string;
           caption: string;
           created_at: string;
           id: string;
@@ -102,6 +107,8 @@ export type Database = {
           url: string;
         };
         Insert: {
+          published?: boolean;
+          alt_text?: string;
           caption?: string;
           created_at?: string;
           id?: string;
@@ -113,6 +120,8 @@ export type Database = {
           url: string;
         };
         Update: {
+          published?: boolean;
+          alt_text?: string;
           caption?: string;
           created_at?: string;
           id?: string;
@@ -124,6 +133,16 @@ export type Database = {
           url?: string;
         };
         Relationships: [];
+      };
+      customer_reviews: {
+        Row: import("@/lib/reviews").CustomerReview;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      review_moderation_log: {
+        Row: {id:string;review_id:string|null;moderator_id:string|null;action:string;previous_status:string|null;next_status:string|null;created_at:string};
+        Insert: never; Update: never; Relationships: [];
       };
       user_roles: {
         Row: {
@@ -148,6 +167,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      begin_customer_review: {Args:Record<string,never>;Returns:string};
+      submit_customer_review: {Args:ReturnType<typeof import("@/lib/reviews").reviewPayload>;Returns:undefined};
+      list_published_reviews: {Args:Record<string,never>;Returns:import("@/lib/reviews").PublicReview[]};
+      moderate_customer_review: {Args:{_id:string;_action:string;_note?:string;_title?:string;_body?:string;_featured?:boolean;_sort_order?:number};Returns:undefined};
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"];

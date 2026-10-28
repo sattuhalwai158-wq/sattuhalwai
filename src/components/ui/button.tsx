@@ -17,15 +17,15 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         royal:
-          "border border-primary bg-primary text-primary-foreground shadow-soft hover:bg-berry",
+          "border border-primary bg-primary text-primary-foreground shadow-soft hover:bg-berry hover:text-hero-foreground",
         regalOutline:
-          "border border-primary/50 bg-background/90 text-primary shadow-sm backdrop-blur-md hover:bg-primary hover:text-primary-foreground",
+          "border border-primary/40 bg-background text-primary shadow-sm hover:bg-primary hover:text-primary-foreground",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
+        default: "min-h-11 px-5 py-2.5",
+        sm: "min-h-11 rounded-md px-4 py-2 text-xs",
         lg: "h-11 rounded-md px-8",
-        icon: "h-9 w-9",
+        icon: "h-11 w-11",
       },
     },
     defaultVariants: {

@@ -66,7 +66,7 @@
   --color-gold: var(--gold);
   --color-hero-ink: var(--hero-ink);
   --color-hero-foreground: var(--hero-foreground);
-  --color-obsidian: var(--blush);
+  --color-obsidian: var(--hero-ink);
   --shadow-soft: 0 10px 30px oklch(0.2 0.03 60 / 8%);
   --shadow-lift: 0 20px 50px oklch(0.3 0.06 40 / 14%);
 }
@@ -79,10 +79,10 @@
   --card-foreground: oklch(0.22 0.015 60);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.015 60);
-  --primary: oklch(0.6 0.12 72);
-  --primary-foreground: oklch(0.24 0.03 65);
+  --primary: oklch(0.34 0.105 15);
+  --primary-foreground: oklch(0.985 0.008 85);
   --secondary: oklch(0.955 0.02 80);
-  --secondary-foreground: oklch(0.6 0.12 72);
+  --secondary-foreground: oklch(0.34 0.105 15);
   --muted: oklch(0.965 0.012 82);
   --muted-foreground: oklch(0.46 0.02 60);
   --accent: oklch(0.76 0.13 83);
@@ -91,11 +91,11 @@
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.86 0.04 82);
   --input: oklch(0.85 0.03 82);
-  --ring: oklch(0.66 0.12 80);
+  --ring: oklch(0.4 0.11 15);
   --blush: oklch(0.99 0.004 85);
-  --berry: oklch(0.5 0.11 68);
-  --gold: oklch(0.64 0.12 78);
-  --hero-ink: oklch(0.16 0.01 65);
+  --berry: oklch(0.4 0.11 15);
+  --gold: oklch(0.51 0.075 78);
+  --hero-ink: oklch(0.2 0.035 15);
   --hero-foreground: oklch(0.985 0.008 85);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -119,10 +119,10 @@
   --card-foreground: oklch(0.22 0.015 60);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.015 60);
-  --primary: oklch(0.6 0.12 72);
-  --primary-foreground: oklch(0.24 0.03 65);
+  --primary: oklch(0.34 0.105 15);
+  --primary-foreground: oklch(0.985 0.008 85);
   --secondary: oklch(0.955 0.02 80);
-  --secondary-foreground: oklch(0.6 0.12 72);
+  --secondary-foreground: oklch(0.34 0.105 15);
   --muted: oklch(0.965 0.012 82);
   --muted-foreground: oklch(0.46 0.02 60);
   --accent: oklch(0.76 0.13 83);
@@ -131,8 +131,8 @@
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.86 0.04 82);
   --input: oklch(0.85 0.03 82);
-  --ring: oklch(0.66 0.12 80);
-  --hero-ink: oklch(0.16 0.01 65);
+  --ring: oklch(0.4 0.11 15);
+  --hero-ink: oklch(0.2 0.035 15);
   --hero-foreground: oklch(0.985 0.008 85);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -222,5 +222,157 @@ body {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+.home-hero {
+  background:
+    radial-gradient(ellipse at top left, oklch(0.94 0.035 80 / 65%), transparent 65%),
+    var(--background);
+}
+:focus-visible {
+  outline: 2px solid var(--berry);
+  outline-offset: 4px;
+}
+section[id],
+main {
+  scroll-margin-top: 7rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Shared editorial rhythm, including regional and journal pages. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+p,
+li {
+  overflow-wrap: anywhere;
+}
+main :is(.grid, .flex) > * {
+  min-width: 0;
+}
+main > section {
+  position: relative;
+}
+.bg-obsidian {
+  --gold: oklch(0.78 0.09 82);
+}
+.page-intro {
+  background: var(--secondary);
+}
+.page-intro h1 {
+  font-size: clamp(2.65rem, 5.5vw, 5.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+.page-intro::after {
+  content: "";
+  display: block;
+  position: absolute;
+  right: 7%;
+  bottom: 0;
+  width: 12rem;
+  height: 70%;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: 12rem 12rem 0 0;
+  pointer-events: none;
+  opacity: 0.45;
+}
+.page-intro > div {
+  position: relative;
+  z-index: 1;
+}
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.editorial-card {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--card);
+  overflow: hidden;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
+}
+.editorial-card:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow-soft);
+}
+.field-error {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--destructive);
+}
+[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+select {
+  min-height: 2.75rem;
+  border-radius: 0.375rem;
+}
+.legal-copy article {
+  scroll-margin-top: 8rem;
+}
+.legal-copy h2 {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+}
+.admin-panel [role="tablist"] {
+  display: flex;
+  height: auto;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+.admin-panel [role="tab"] {
+  min-height: 2.75rem;
+  white-space: normal;
+  text-align: center;
+}
+.admin-panel input,
+.admin-panel textarea,
+.admin-panel select {
+  background: var(--card);
+}
+.admin-panel label {
+  letter-spacing: 0.015em;
+}
+.admin-panel [role="tabpanel"] > .bg-card {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+@media (max-width: 639px) {
+  main > section:is(.py-24, .py-20, .py-16) {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+  .page-intro::after {
+    display: none;
+  }
+  .home-hero h1 {
+    font-size: clamp(2.8rem, 13vw, 4.5rem);
+  }
+  main :is(h2.text-5xl, h3.text-4xl) {
+    font-size: 2.25rem;
+    line-height: 1.15;
+  }
+  .filter-bar button {
+    white-space: normal;
+    text-align: left;
   }
 }

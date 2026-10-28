@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Expand } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { GalleryViewer } from "@/components/gallery-viewer";
+import { CategoryFilter, EmptyState, EnquiryBanner, QueryNotice } from "@/components/page-sections";
 import { PageIntro } from "@/components/site-shell";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { useItems } from "@/lib/site-items";
+import { useItems, useAllItems } from "@/lib/site-items";
 import { buildPageHead, buildBreadcrumbSchema } from "@/components/seo";
 import { useContent, useMedia } from "@/lib/site-data";
 
@@ -39,7 +40,7 @@ function Setups() {
     category: x.category ?? "",
     image: x.image ?? "",
     position: "50% 50%",
-    detail: x.detail ?? "",
+    detail: (x.detail ?? "").replace(/(?:\s*[•·]\s*)?[\d,]+\+?\s+guests/gi, ""),
   }));
   const seenImages = new Set(setupItems.map((item) => item.image));
   const all: Item[] = [
@@ -54,9 +55,19 @@ function Setups() {
         detail: m.caption,
       })),
   ];
-  const cats = ["All", ...useItems("setup_category").map((c) => c.name ?? "")];
+  const categories = useItems("setup_category");
+  const cats = [
+    "All",
+    ...new Set(
+      [...categories.map((c) => c.name), ...all.map((x) => x.category)].filter(
+        (name): name is string => !!name,
+      ),
+    ),
+  ];
+  const contentQuery = useAllItems();
+  const returnFocus = useRef<HTMLButtonElement | null>(null);
   const [cat, setCat] = useState("All");
-  const [selected, setSelected] = useState<Item | null>(null);
+  const [selected, setSelected] = useState<number | null>(null);
   const shown = cat === "All" ? all : all.filter((x) => x.category === cat);
 
   return (
@@ -76,26 +87,45 @@ function Setups() {
         </div>
       </div>
 
-      <section className="px-5 py-16 lg:px-8">
+      <section id="gallery" className="px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="flex gap-2 overflow-x-auto pb-4">
-            {cats.map((x) => (
-              <Button
-                key={x}
-                size="sm"
-                variant={cat === x ? "royal" : "outline"}
-                onClick={() => setCat(x)}
-              >
-                {x}
-              </Button>
-            ))}
-          </div>
+          {contentQuery.isError && (
+            <QueryNotice
+              retry={() => {
+                void contentQuery.refetch();
+              }}
+            />
+          )}
+          <CategoryFilter
+            categories={cats}
+            value={cat}
+            onChange={(value) => {
+              setCat(value);
+              setSelected(null);
+            }}
+          />
+          <p className="mt-5 text-sm text-muted-foreground" role="status">
+            {shown.length} {shown.length === 1 ? "setup" : "setups"} · Select a photo to take a
+            closer look
+          </p>
+          {!shown.length && (
+            <div className="mt-6">
+              <EmptyState
+                title="Your setting, your style."
+                copy="No photos in this category yet. Choose another category or talk to us about your venue."
+              />
+            </div>
+          )}
           <div className="mt-8 grid auto-rows-[310px] gap-4 md:grid-cols-2 lg:grid-cols-3">
             {shown.map((s, i) => (
               <button
                 key={s.image}
-                onClick={() => setSelected(s)}
-                className={`group relative overflow-hidden text-left ${i === 0 ? "lg:col-span-2" : ""}`}
+                onClick={(event) => {
+                  returnFocus.current = event.currentTarget;
+                  setSelected(i);
+                }}
+                aria-haspopup="dialog"
+                className={`editorial-card group relative text-left ${i === 0 ? "lg:col-span-2" : ""}`}
               >
                 <img
                   src={s.image}
@@ -106,15 +136,15 @@ function Setups() {
                   className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
                   style={{ objectPosition: s.position }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-hero-ink/95 via-hero-ink/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-6 text-hero-foreground">
                   <div>
-                    <span className="text-[10px] font-bold uppercase text-primary">
+                    <span className="text-[10px] font-bold uppercase text-hero-foreground/80">
                       {s.category}
                     </span>
                     <h2 className="font-display text-3xl">{s.title}</h2>
                   </div>
-                  <Expand className="text-primary" />
+                  <Expand className="shrink-0 text-hero-foreground" />
                 </div>
               </button>
             ))}
@@ -146,7 +176,7 @@ function Setups() {
                     loop
                     playsInline
                     controls
-                    preload="metadata"
+                    preload="none"
                     className="aspect-[9/16] max-h-[620px] w-full bg-muted object-cover"
                   />
                   <figcaption className="p-5">
@@ -181,33 +211,14 @@ function Setups() {
         </div>
       </section>
 
-      <Dialog
-        open={!!selected}
-        onOpenChange={(o) => {
-          if (!o) setSelected(null);
-        }}
-      >
-        <DialogContent className="max-w-5xl overflow-hidden border-primary/30 bg-background p-0">
-          <DialogTitle className="sr-only">{selected?.title}</DialogTitle>
-          <DialogDescription className="sr-only">{selected?.detail}</DialogDescription>
-          {selected && (
-            <div className="relative h-[75vh]">
-              <img
-                src={selected.image}
-                width={1920}
-                height={1200}
-                alt={selected.title}
-                className="size-full object-cover"
-                style={{ objectPosition: selected.position }}
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background p-8 pt-24">
-                <h2 className="font-display text-4xl">{selected.title}</h2>
-                <p className="text-sm text-muted-foreground">{selected.detail}</p>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <EnquiryBanner />
+      <GalleryViewer
+        images={shown}
+        index={selected}
+        onChange={setSelected}
+        onClose={() => setSelected(null)}
+        returnFocus={returnFocus}
+      />
     </>
   );
 }

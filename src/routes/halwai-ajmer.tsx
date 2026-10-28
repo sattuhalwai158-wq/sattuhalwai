@@ -111,9 +111,9 @@ function HalwaiAjmer() {
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
               The Heart of Every Indian Wedding • हलवाई की परंपरा
             </span>
-            <h1 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
+            <h2 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
               Authentic Wedding Halwai Services in Ajmer by Sattu Halwai.
-            </h1>
+            </h2>
             <p className="mt-6 text-base leading-8 text-muted-foreground">
               In Indian tradition, a wedding is consecrated with sweets. The aroma of pure desi ghee
               simmering in massive iron kadhais, the golden curl of live jalebis, and the
@@ -134,7 +134,7 @@ function HalwaiAjmer() {
                 <div>
                   <h3 className="font-semibold text-foreground text-sm">100% Pure Desi Ghee</h3>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Zero adulteration. We use only verified pure cow and buffalo desi ghee.
+                    Discuss the ghee, dairy and other ingredients used in your selected dishes.
                   </p>
                 </div>
               </div>
@@ -346,12 +346,12 @@ function HalwaiAjmer() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-gold/30 bg-obsidian text-primary-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">
             Reserve Sattu Halwai for Your Celebration
           </h2>
-          <p className="mt-4 text-sm text-primary-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
             Taste our sweets in advance. Speak with Satyanarayan Prajapati today to finalize your
             wedding sweets and live halwai bhatti requirements.
           </p>

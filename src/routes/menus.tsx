@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { PageIntro } from "@/components/site-shell";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { useItems } from "@/lib/site-items";
+import { CategoryFilter, EmptyState, EnquiryBanner, QueryNotice } from "@/components/page-sections";
+import { useItems, useAllItems } from "@/lib/site-items";
 import { buildPageHead, buildBreadcrumbSchema } from "@/components/seo";
 
 export const Route = createFileRoute("/menus")({
@@ -52,7 +53,17 @@ function Menus() {
       .map((t) => t.trim())
       .filter(Boolean),
   }));
-  const cats = ["All", ...useItems("menu_category").map((c) => c.name ?? "")];
+  const categories = useItems("menu_category");
+  const cats = [
+    "All",
+    ...new Set(
+      [...categories.map((c) => c.name), ...dishes.map((d) => d.category)].filter(
+        (name): name is string => !!name,
+      ),
+    ),
+  ];
+  const contentQuery = useAllItems();
+  const returnFocus = useRef<HTMLButtonElement | null>(null);
   const [cat, setCat] = useState("All");
   const [selected, setSelected] = useState<Dish | null>(null);
   const shown = cat === "All" ? dishes : dishes.filter((x) => x.category === cat);
@@ -73,27 +84,38 @@ function Menus() {
 
       <section className="px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="flex gap-2 overflow-x-auto pb-4">
-            {cats.map((x) => (
-              <Button
-                key={x}
-                variant={cat === x ? "royal" : "outline"}
-                size="sm"
-                onClick={() => setCat(x)}
-              >
-                {x}
-              </Button>
-            ))}
-          </div>
-
+          {contentQuery.isError && (
+            <QueryNotice
+              retry={() => {
+                void contentQuery.refetch();
+              }}
+            />
+          )}
+          <CategoryFilter categories={cats} value={cat} onChange={setCat} />
+          <p className="mt-5 text-sm text-muted-foreground" role="status">
+            {shown.length} {shown.length === 1 ? "dish" : "dishes"}
+            {cat !== "All" ? ` · ${cat}` : " · Find a favourite for your menu"}
+          </p>
+          {!shown.length && (
+            <div className="mt-6">
+              <EmptyState
+                title="Let’s create your menu together."
+                copy="There are no dishes in this selection yet. Explore another category or ask our team about a custom menu."
+              />
+            </div>
+          )}
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {shown.map((d) => (
               <button
                 key={d.title}
-                onClick={() => setSelected(d)}
-                className="group overflow-hidden border border-border bg-card text-left transition-colors hover:border-primary/60"
+                onClick={(event) => {
+                  returnFocus.current = event.currentTarget;
+                  setSelected(d);
+                }}
+                aria-haspopup="dialog"
+                className="editorial-card group text-left"
               >
-                <div className="h-72 overflow-hidden">
+                <div className="aspect-[4/3] overflow-hidden">
                   <img
                     src={d.image}
                     width={1600}
@@ -145,13 +167,20 @@ function Menus() {
         </div>
       </section>
 
+      <EnquiryBanner />
       <Dialog
         open={!!selected}
         onOpenChange={(o) => {
           if (!o) setSelected(null);
         }}
       >
-        <DialogContent className="overflow-hidden border-primary/30 bg-background p-0 sm:max-w-2xl">
+        <DialogContent
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            returnFocus.current?.focus();
+          }}
+          className="border-primary/30 bg-background p-0 sm:max-w-2xl"
+        >
           {selected && (
             <>
               <img
@@ -159,7 +188,7 @@ function Menus() {
                 width={1600}
                 height={1200}
                 alt={selected.title}
-                className="h-72 w-full object-cover"
+                className="h-[30svh] w-full object-contain bg-secondary sm:h-72"
                 style={{ objectPosition: selected.position }}
               />
               <div className="p-7">

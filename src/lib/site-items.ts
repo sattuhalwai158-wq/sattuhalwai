@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { dishes, setups, testimonials } from "@/lib/content";
+import { getPublicContentClient } from "@/lib/public-content-client";
+import { dishes, setups } from "@/lib/content";
 
 type ItemKey =
   | "name"
@@ -142,7 +142,7 @@ export const defaultItems: Record<string, ItemData[]> = {
     detail: s.detail,
     image: s.image,
   })),
-  testimonial: testimonials.map(([quote, name, venue, date]) => ({ quote, name, venue, date })),
+  testimonial: [],
   faq: [
     ["Which places do you cater in?", "We cater celebrations in Ajmer, Pushkar and Kishangarh."],
     [
@@ -151,7 +151,7 @@ export const defaultItems: Record<string, ItemData[]> = {
     ],
     [
       "How many guests can you serve?",
-      "From intimate functions of 100 guests to grand weddings of 5,000 or more.",
+      "Share your guest estimate and venue with the team to confirm service arrangements.",
     ],
     [
       "Can we taste the food before booking?",
@@ -168,12 +168,7 @@ export const defaultItems: Record<string, ItemData[]> = {
     ["Live Food Counters", "लाइव काउंटर", "/media/live-dosa-counter.jpg"],
     ["Palace Buffet Setups", "शाही सजावट", "/media/buffet-28.jpg"],
   ].map(([title, hi, image]) => ({ title, hi, image })),
-  stat: [
-    ["10+", "Years of mastery", "10 साल का अनुभव"],
-    ["500+", "Royal celebrations", "500+ शादियाँ"],
-    ["100%", "Pure desi ghee", "शुद्ध देसी घी"],
-    ["50+", "Halwais & crew", "हलवाई और स्टाफ"],
-  ].map(([value, label, hi]) => ({ value, label, hi })),
+  stat: [],
   destination: [
     ["Ajmer", "अजमेर", "/media/buffet-6.jpg"],
     ["Pushkar", "पुष्कर", "/media/rajasthani-stall.jpg"],
@@ -184,8 +179,14 @@ export const defaultItems: Record<string, ItemData[]> = {
 export function useAllItems() {
   return useQuery({
     queryKey: ["site_items"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("site_items").select("*").order("sort_order");
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    queryFn: async ({ signal }) => {
+      const { data, error } = await getPublicContentClient()
+        .from("site_items")
+        .select("*")
+        .order("sort_order")
+        .abortSignal(AbortSignal.any([signal, AbortSignal.timeout(8000)]));
       if (error) throw error;
       return (data ?? []) as unknown as SiteItem[];
     },
@@ -196,5 +197,6 @@ export function useAllItems() {
 export function useItems(kind: string): ItemData[] {
   const q = useAllItems();
   if (!q.data) return defaultItems[kind] ?? [];
-  return q.data.filter((i) => i.kind === kind).map((i) => i.data);
+  const items = q.data.filter((i) => i.kind === kind).map((i) => i.data);
+  return kind === "faq" ? items.filter((item) => !/how many guests/i.test(item.q ?? "")) : items;
 }

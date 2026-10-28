@@ -42,7 +42,7 @@ const kishangarhFaqs = [
   {
     question: "Can you cater large-scale gatherings for Kishangarh wedding lawns?",
     answer:
-      "Yes. We frequently cater grand celebrations ranging from 500 to 5,000+ guests, equipped with multiple simultaneous live food counters, separate dessert pavilions, and professional banquet managers.",
+      "Tell us your estimated guest count and venue. We will discuss available counters, staffing and service arrangements for your event.",
   },
   {
     question: "Do you provide corporate and industrial event catering in Kishangarh?",
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/catering-kishangarh")({
     buildPageHead({
       title: "Catering Services in Kishangarh | Wedding Caterers | N Sattu Cuisine",
       description:
-        "Premium wedding & event caterers in Kishangarh, Rajasthan. Authentic Rajasthani food, pure desi ghee sweets & luxury buffet setups for 100 to 5,000+ guests.",
+        "Premium wedding & event caterers in Kishangarh, Rajasthan. Authentic Rajasthani food, pure desi ghee sweets & luxury buffet setups for weddings and family celebrations.",
       path: "/catering-kishangarh",
       ogImage: "/media/night-stalls.jpg",
       structuredData: [
@@ -110,9 +110,9 @@ function CateringKishangarh() {
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
               Marble City Celebrations • किशनगढ़ की भव्य शादियाँ
             </span>
-            <h1 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
+            <h2 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
               Premier Wedding & Event Catering Services Across Kishangarh.
-            </h1>
+            </h2>
             <p className="mt-6 text-base leading-8 text-muted-foreground">
               Known for its heritage, enterprise, and renowned marble architecture, Kishangarh hosts
               some of the grandest wedding celebrations in Rajasthan. Families and hosts in
@@ -133,7 +133,7 @@ function CateringKishangarh() {
                 <div>
                   <h3 className="font-semibold text-foreground text-sm">High-Volume Capacity</h3>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Serving up to 5,000+ guests seamlessly with fast, courteous counter service.
+                    Plan counters, staffing and guest flow to suit your venue and celebration.
                   </p>
                 </div>
               </div>
@@ -317,12 +317,12 @@ function CateringKishangarh() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-gold/30 bg-obsidian text-primary-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">
             Book Catering for Your Kishangarh Celebration
           </h2>
-          <p className="mt-4 text-sm text-primary-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
             Submit your guest count, preferred event date, and cuisine choices. Our catering
             director will contact you promptly.
           </p>

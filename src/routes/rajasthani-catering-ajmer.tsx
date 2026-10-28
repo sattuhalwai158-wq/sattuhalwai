@@ -111,15 +111,14 @@ function RajasthaniCateringAjmer() {
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
               The True Essence of Rajasthan • मारवाड़ का असली स्वाद
             </span>
-            <h1 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
+            <h2 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
               Authentic Rajasthani Food Catering in Ajmer, Pushkar & Kishangarh.
-            </h1>
+            </h2>
             <p className="mt-6 text-base leading-8 text-muted-foreground">
               The culinary heritage of Rajasthan is defined by bold aromatic spices, sun-dried
               desert bounty, rich dairy, and the golden warmth of pure cow desi ghee. Under the
               culinary stewardship of Nathu Ji Prajapati and Satyanarayan Prajapati,{" "}
-              <strong>N Sattu Cuisine</strong> has championed authentic regional gastronomy for over
-              a decade.
+              <strong>N Sattu Cuisine</strong> celebrates the recipes and hospitality of Rajasthan.
             </p>
             <p className="mt-4 text-base leading-8 text-muted-foreground">
               We reject modern shortcuts and commercial premixes. Every pot of Panchmel Dal, every
@@ -351,12 +350,12 @@ function RajasthaniCateringAjmer() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-gold/30 bg-obsidian text-primary-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">
             Taste Authentic Rajasthan at Your Wedding
           </h2>
-          <p className="mt-4 text-sm text-primary-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
             Connect directly with MD Satyanarayan Prajapati to design a regal Rajasthani menu
             tailored to your family's customs.
           </p>

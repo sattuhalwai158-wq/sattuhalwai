@@ -8,7 +8,9 @@ import {
   MapPin,
   ShieldCheck,
   Sparkles,
-  Star,
+  Pause,
+  Play,
+  Phone,
   UtensilsCrossed,
 } from "lucide-react";
 import {
@@ -18,12 +20,20 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { images } from "@/lib/content";
 import { useItems } from "@/lib/site-items";
-import { buildPageHead, buildLocalBusinessSchema, buildFaqSchema } from "@/components/seo";
-import { useContent, useMedia } from "@/lib/site-data";
+import { buildPageHead, buildLocalBusinessSchema } from "@/components/seo";
+import { siteMediaQueryOptions, useContent, useMedia } from "@/lib/site-data";
 
 export const Route = createFileRoute("/")({
+  loader: async ({ context }) => {
+    try {
+      return await context.queryClient.ensureQueryData(siteMediaQueryOptions);
+    } catch {
+      // On failure, use a stable fallback collection for this visit instead of
+      // immediately swapping images again during hydration.
+      return [];
+    }
+  },
   head: () =>
     buildPageHead({
       title: "Wedding Caterers in Ajmer | N Sattu Cuisine",
@@ -31,66 +41,10 @@ export const Route = createFileRoute("/")({
         "Premier wedding caterers in Ajmer, Pushkar & Kishangarh by N Sattu Cuisine. Authentic Rajasthani banquets, pure desi ghee sweets, live food stalls & royal palace buffet setups.",
       path: "/",
       ogImage: "/media/buffet-6.jpg",
-      structuredData: [
-        buildLocalBusinessSchema(),
-        buildFaqSchema([
-          {
-            question: "Which places do you cater in?",
-            answer:
-              "We cater wedding and event celebrations in Ajmer, Pushkar and Kishangarh, Rajasthan.",
-          },
-          {
-            question: "Do you make pure Jain food? (जैन भोजन)",
-            answer:
-              "Yes. Dedicated Jain cooking, separate utensils, and live counters strictly prepared without onion and garlic are provided.",
-          },
-          {
-            question: "How many guests can you serve?",
-            answer:
-              "From intimate celebrations of 100 guests to royal destination weddings of 5,000 or more.",
-          },
-          {
-            question: "Can we taste the food before booking?",
-            answer:
-              "Yes. Advance menu tasting sessions are arranged by appointment at our Ajmer kitchen.",
-          },
-          {
-            question: "Do you provide serveware and buffet décor?",
-            answer:
-              "Yes. We bring complete royal brass and copper serveware, kulhads, and custom LED illuminated thematic buffet installations.",
-          },
-        ]),
-      ],
+      structuredData: [buildLocalBusinessSchema()],
     }),
   component: Index,
 });
-
-const experiences = [
-  [
-    Gem,
-    "Grand Royal Banquets",
-    "Royal thaals and lavish multi-cuisine buffets composed for destination celebrations.",
-    images.banquet,
-  ],
-  [
-    Sparkles,
-    "Artisanal Mithai Vault",
-    "Sculpted sweets, slow-roasted mawa and premium dry fruits crafted in-house.",
-    images.delicacies,
-  ],
-  [
-    ChefHat,
-    "Theatrical Live Counters",
-    "Jalebi, tandoor, chaat and global flavours finished before your guests.",
-    images.liveCounter,
-  ],
-  [
-    ShieldCheck,
-    "Palace Buffet Staging",
-    "Brass, copper and bespoke illuminated presentations made for grand rooms.",
-    images.banquet,
-  ],
-] as const;
 
 function SectionTitle({
   eyebrow,
@@ -107,7 +61,7 @@ function SectionTitle({
     <div className="mx-auto max-w-3xl text-center">
       <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">{eyebrow}</p>
       <h2
-        className={`mt-4 font-display text-4xl leading-tight sm:text-5xl ${light ? "text-primary-foreground" : "text-foreground"}`}
+        className={`mt-4 font-display text-4xl leading-tight sm:text-5xl ${light ? "text-hero-foreground" : "text-foreground"}`}
       >
         {title}
       </h2>
@@ -118,7 +72,7 @@ function SectionTitle({
       </div>
       {copy && (
         <p
-          className={`mx-auto mt-5 max-w-2xl leading-7 ${light ? "text-primary-foreground/75" : "text-muted-foreground"}`}
+          className={`mx-auto mt-5 max-w-2xl leading-7 ${light ? "text-hero-foreground/75" : "text-muted-foreground"}`}
         >
           {copy}
         </p>
@@ -155,7 +109,7 @@ function ImageCard({
         style={{ objectPosition: position }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-obsidian/70 via-obsidian/10 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 p-6 text-primary-foreground">
+      <div className="absolute inset-x-0 bottom-0 p-6 text-hero-foreground">
         {label && (
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">{label}</p>
         )}
@@ -191,25 +145,37 @@ const process = [
 ] as const;
 
 function Index() {
-  const heroMedia = useMedia("hero");
-  const signatures = useMedia("signatures");
-  const journey = useMedia("journey");
-  const videos = useMedia("videos");
+  const initialMedia = Route.useLoaderData();
+  const heroMedia = useMedia("hero", initialMedia);
+  const signatures = useMedia("signatures", initialMedia);
+  const journey = useMedia("journey", initialMedia);
+  const videos = useMedia("videos", initialMedia);
   const text = useContent();
   const dishes = useItems("dish");
   const setups = useItems("setup");
-  const testimonials = useItems("testimonial").map((t) => [t.quote, t.name, t.venue] as const);
   const faqs = useItems("faq").map((f) => [f.q ?? "", f.a ?? ""] as const);
-  const stats = useItems("stat").map((x) => [x.value, x.label, x.hi] as const);
   const destinations = useItems("destination").map((x) => [x.place, x.hi, x.image] as const);
   const serviceIcons = [Gem, Sparkles, ChefHat, ShieldCheck];
   const heroImages = heroMedia.filter((m) => m.media_type === "image");
-  const slides = heroImages.length ? heroImages.map((m) => m.url) : [images.delicacies];
+  const slides = heroImages.length
+    ? heroImages.map((m) => m.url)
+    : ["/media/home-mithai.webp", "/media/home-thali.webp", "/media/home-live-counter.webp"];
   const [slide, setSlide] = useState(0);
+  const [paused, setPaused] = useState(true);
+  // Live CMS content may replace the fallback slides with a shorter collection.
+  const activeSlide = slide % slides.length;
   useEffect(() => {
-    const timer = window.setInterval(() => setSlide((value) => (value + 1) % slides.length), 5000);
+    if (
+      paused ||
+      slides.length < 2 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    const timer = window.setInterval(() => {
+      if (!document.hidden) setSlide((value) => (value + 1) % slides.length);
+    }, 6500);
     return () => window.clearInterval(timer);
-  }, [slides.length]);
+  }, [slides.length, paused]);
   const featured = signatures.length
     ? signatures.slice(0, 3).map((m) => ({
         key: m.id,
@@ -230,78 +196,131 @@ function Index() {
   );
   return (
     <>
-      <section className="relative mt-20 h-[calc(100svh-5rem)] min-h-[620px] overflow-hidden bg-hero-ink md:mt-28 md:h-[calc(100svh-7rem)]">
-        {slides.map((image, index) => (
-          <img
-            key={image}
-            src={image}
-            alt={heroImages[index]?.title || "N-Sattu Cuisine royal catering"}
-            className={`absolute inset-0 size-full object-cover saturate-[1.08] contrast-[1.04] transition-all duration-1000 ${slide === index ? "scale-100 opacity-100" : "scale-[1.02] opacity-0"}`}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-hero-ink/40 via-hero-ink/15 to-hero-ink/65" />
-        <div className="relative mx-auto flex h-full max-w-5xl flex-col items-center justify-center px-5 text-center animate-rise">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.5em] text-gold drop-shadow-sm">
-            N-Sattu Cuisine
-          </p>
-          <div className="mt-4 flex items-center gap-4">
-            <span className="h-px w-10 bg-gold/60" />
-            <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-hero-foreground sm:text-[11px]">
+      <section className="home-hero mt-20 md:mt-28" aria-label="Wedding catering in Rajasthan">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-20">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-berry">
+              Ajmer · Pushkar · Kishangarh
+            </p>
+            <p className="mt-7 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
               {text("home_eyebrow", "Royal Wedding & Event Catering Specialist")}
             </p>
-            <span className="h-px w-10 bg-gold/60" />
+            <h1 className="mt-5 max-w-xl font-display text-6xl leading-[1.02] tracking-tight sm:text-7xl lg:text-8xl">
+              {text("home_title", "The Art of Royal Catering.")}
+            </h1>
+            <p className="mt-6 max-w-lg text-base leading-8 text-muted-foreground">
+              {text(
+                "home_subtitle",
+                "Authentic Rajasthani feasts, handcrafted mithai and live food counters. Thoughtfully prepared for your family’s most cherished celebrations.",
+              )}
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button variant="royal" size="lg" className="h-12 px-6" asChild>
+                <Link to="/book">
+                  Plan your celebration <ArrowRight />
+                </Link>
+              </Button>
+              <Button variant="regalOutline" size="lg" className="h-12 px-6" asChild>
+                <Link to="/menus">Explore our menus</Link>
+              </Button>
+            </div>
+            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 border-t border-border pt-6 text-xs font-medium text-muted-foreground">
+              <span className="flex items-center gap-2">
+                <ChefHat className="size-4 text-berry" /> Family-led hospitality
+              </span>
+              <span className="flex items-center gap-2">
+                <ShieldCheck className="size-4 text-berry" /> Jain options available
+              </span>
+            </div>
           </div>
-          <h1 className="mt-7 font-display text-5xl font-medium leading-[0.95] text-hero-foreground drop-shadow-lg sm:text-7xl lg:text-8xl">
-            {text("home_title", "The Art of Royal Catering.")}
-          </h1>
-          <p className="mt-7 max-w-2xl text-base leading-7 text-hero-foreground/90 sm:text-lg sm:leading-8">
-            {text(
-              "home_subtitle",
-              "Where every bite becomes a memory—authentic Rajasthani feasts, artisanal sweets and live food stalls in Ajmer, Pushkar & Kishangarh.",
-            )}
-          </p>
-          <div className="mt-9 flex w-full max-w-md flex-col justify-center gap-3 sm:w-auto sm:max-w-none sm:flex-row">
-            <Button
-              variant="royal"
-              size="lg"
-              className="h-12 px-9 uppercase tracking-wider"
-              asChild
-            >
-              <Link to="/book">
-                Plan your celebration <ArrowRight />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="ghost"
-              className="h-12 border border-hero-foreground/60 bg-hero-ink/10 px-9 uppercase tracking-wider text-hero-foreground backdrop-blur-sm hover:bg-hero-foreground/15 hover:text-hero-foreground"
-              asChild
-            >
-              <Link to="/menus">Explore menus</Link>
-            </Button>
-          </div>
-        </div>
-        <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-1">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              aria-label={`Show image ${index + 1}`}
-              onClick={() => setSlide(index)}
-              className="grid size-9 place-items-center"
-            >
-              <span
-                className={`block h-px transition-all ${slide === index ? "w-8 bg-gold" : "w-4 bg-hero-foreground/70"}`}
+          <div className="relative min-w-0">
+            <div className="relative aspect-[4/5] max-h-[620px] overflow-hidden rounded-t-[10rem] rounded-b-2xl bg-secondary shadow-lift">
+              <img
+                key={slides[activeSlide]}
+                src={slides[activeSlide]}
+                alt={
+                  heroImages[activeSlide]?.title ||
+                  [
+                    "Handcrafted rose and kesar mithai by N-Sattu Cuisine",
+                    "Traditional Rajasthani celebration thali",
+                    "Freshly prepared live food counter",
+                  ][activeSlide]
+                }
+                width={900}
+                height={1125}
+                fetchPriority="high"
+                loading="eager"
+                decoding="async"
+                className="size-full object-cover"
+                onError={(event) => {
+                  if (!event.currentTarget.src.endsWith("/media/home-mithai.webp"))
+                    event.currentTarget.src = "/media/home-mithai.webp";
+                }}
               />
-            </button>
-          ))}
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-hero-ink/90 to-transparent px-7 pb-7 pt-20 text-hero-foreground">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-hero-foreground/80">
+                  From our kitchen to your celebration
+                </p>
+                <p className="mt-2 font-display text-3xl">Made with care. Served with warmth.</p>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">A taste of N-Sattu Cuisine</span>
+              <div className="flex items-center" role="group" aria-label="Featured photos">
+                {slides.map((_, index) => (
+                  <button
+                    key={index}
+                    aria-label={`Show photo ${index + 1}`}
+                    aria-pressed={activeSlide === index}
+                    onClick={() => {
+                      setSlide(index);
+                      setPaused(true);
+                    }}
+                    className="grid size-10 place-items-center"
+                  >
+                    <span
+                      className={`h-1.5 rounded-full ${activeSlide === index ? "w-6 bg-berry" : "w-1.5 bg-border"}`}
+                    />
+                  </button>
+                ))}
+                {slides.length > 1 && (
+                  <button
+                    className="grid size-10 place-items-center text-berry"
+                    aria-label={paused ? "Play slideshow" : "Pause slideshow"}
+                    onClick={() => setPaused(!paused)}
+                  >
+                    {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
+      <div className="border-y border-border bg-secondary px-5 py-5">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 text-sm">
+          <p>
+            <span className="font-semibold">Your occasion, your menu.</span>{" "}
+            <span className="text-muted-foreground">
+              Weddings, family functions & private celebrations.
+            </span>
+          </p>
+          <a
+            href="tel:+919460426952"
+            className="inline-flex items-center gap-2 font-semibold text-berry"
+          >
+            <Phone className="size-4" /> Talk to our team <ArrowRight className="size-4" />
+          </a>
+        </div>
+      </div>
 
       <section className="border-b border-border bg-background px-6 py-24 lg:py-32">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="relative aspect-[4/5] overflow-hidden border border-gold/30 bg-secondary p-3">
             <img
-              src={images.masterHalwai}
+              src="/media/home-hospitality.webp"
+              loading="lazy"
+              decoding="async"
               alt="N-Sattu Cuisine team preparing a royal celebration"
               className="size-full object-cover"
             />
@@ -363,7 +382,7 @@ function Index() {
           <SectionTitle
             eyebrow="Signature creations • खास पकवान"
             title="Crafted for the royal table."
-            copy="Handmade in pure desi ghee by our master halwais — the dishes our hosts remember long after the wedding."
+            copy="Discover our mithai, celebration plates and live-counter favourites. Discuss your preferences with our team."
           />
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((f) => (
@@ -376,87 +395,6 @@ function Index() {
                 position={f.position}
               />
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-gold/30 bg-secondary px-6 py-16">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-y-10 md:grid-cols-4">
-          {stats.map(([value, label, hi]) => (
-            <div
-              key={label}
-              className="relative px-4 text-center md:after:absolute md:after:right-0 md:after:top-1/2 md:after:h-16 md:after:w-px md:after:-translate-y-1/2 md:after:bg-gold/40 md:last:after:hidden"
-            >
-              <strong className="block font-display text-5xl font-semibold leading-none text-primary sm:text-6xl">
-                {value}
-              </strong>
-              <span className="mx-auto mt-4 block h-px w-8 bg-gold" />
-              <span className="mt-3 block text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground">
-                {label}
-              </span>
-              <span className="mt-1 block text-sm text-berry">{hi}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-obsidian px-6 py-24 lg:py-28">
-        <img
-          src="/media/buffet-28.jpg"
-          alt=""
-          className="absolute inset-0 size-full object-cover opacity-15"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-obsidian via-obsidian/80 to-obsidian" />
-        <div className="relative mx-auto max-w-7xl">
-          <SectionTitle
-            light
-            eyebrow="Kind words • ग्राहकों की राय"
-            title="Loved by families we have served."
-          />
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {testimonials.slice(0, 3).map(([quote, name, venue]) => (
-              <figure
-                key={name}
-                className="relative flex flex-col rounded-sm border border-gold/30 bg-primary-foreground/[0.04] p-8 pt-12 backdrop-blur-sm transition-colors hover:border-gold/60"
-              >
-                <span
-                  aria-hidden
-                  className="absolute -top-6 left-8 grid size-12 place-items-center rounded-full border border-gold/50 bg-obsidian font-display text-4xl leading-none text-gold"
-                >
-                  “
-                </span>
-                <div className="flex gap-1 text-gold">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="size-3.5 fill-current" />
-                  ))}
-                </div>
-                <blockquote className="mt-5 flex-1 font-display text-[1.35rem] italic leading-8 text-primary-foreground/90">
-                  {quote}
-                </blockquote>
-                <figcaption className="mt-8 flex items-center gap-3 border-t border-gold/20 pt-5">
-                  <span className="grid size-10 place-items-center rounded-full bg-gold font-display text-lg font-semibold text-foreground">
-                    {(name ?? "N").charAt(0)}
-                  </span>
-                  <span>
-                    <span className="block text-sm font-semibold text-primary-foreground">
-                      {name}
-                    </span>
-                    <span className="block text-xs text-gold/80">{venue}</span>
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Button
-              variant="ghost"
-              className="border border-gold/50 text-gold hover:bg-gold hover:text-foreground"
-              asChild
-            >
-              <Link to="/reviews">
-                Read all reviews <ArrowRight />
-              </Link>
-            </Button>
           </div>
         </div>
       </section>
@@ -516,7 +454,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="px-6 py-24 lg:py-32">
+      <section id="gallery" className="px-6 py-24 lg:py-32">
         <div className="mx-auto max-w-7xl">
           <SectionTitle
             eyebrow="Gallery • सजावट और लाइव काउंटर"
@@ -527,7 +465,7 @@ function Index() {
               <Link
                 key={setup.title}
                 to="/setups"
-                className={`group relative overflow-hidden ${index === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
+                className={`group relative overflow-hidden bg-obsidian ${index === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
               >
                 <img
                   src={setup.image}
@@ -535,8 +473,8 @@ function Index() {
                   loading="lazy"
                   className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian/60 to-transparent" />
-                <div className="absolute bottom-0 p-5 text-primary-foreground">
+                <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 to-transparent" />
+                <div className="absolute bottom-0 p-5 text-hero-foreground">
                   <p className="text-[10px] uppercase tracking-widest text-gold">
                     {setup.category}
                   </p>
@@ -590,7 +528,7 @@ function Index() {
                       loop
                       playsInline
                       controls
-                      preload="metadata"
+                      preload="none"
                       className="aspect-[9/16] max-h-[560px] w-full bg-muted object-cover"
                     />
                     <figcaption className="p-5">
@@ -633,7 +571,7 @@ function Index() {
                 <Link
                   key={place}
                   to={destinationHref}
-                  className="group relative block aspect-[4/3] overflow-hidden rounded-sm"
+                  className="group relative block aspect-[4/3] overflow-hidden rounded-sm bg-obsidian"
                 >
                   <img
                     src={img}
@@ -644,11 +582,11 @@ function Index() {
                     className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-obsidian/45 transition-colors group-hover:bg-obsidian/30" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-primary-foreground">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-hero-foreground">
                     <MapPin className="text-gold" />
                     <h3 className="mt-2 font-display text-4xl">{place}</h3>
                     <p className="text-gold font-medium">{hi}</p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-primary-foreground border-b border-gold pb-0.5">
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-hero-foreground border-b border-gold pb-0.5">
                       View Catering Services <ArrowRight className="size-3" />
                     </span>
                   </div>
@@ -699,6 +637,7 @@ function Index() {
       <section className="relative overflow-hidden bg-obsidian px-6 py-24">
         <img
           src="/media/buffet-39.jpg"
+          loading="lazy"
           alt=""
           className="absolute inset-0 size-full object-cover opacity-25"
         />
@@ -707,10 +646,10 @@ function Index() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">
               Enquiry • पूछताछ
             </p>
-            <h2 className="mt-4 font-display text-4xl leading-tight text-primary-foreground sm:text-5xl">
+            <h2 className="mt-4 font-display text-4xl leading-tight text-hero-foreground sm:text-5xl">
               Start planning your royal feast.
             </h2>
-            <p className="mt-5 leading-7 text-primary-foreground/75">
+            <p className="mt-5 leading-7 text-hero-foreground/75">
               Share your event details through our booking form. Satyanarayan Prajapati and team
               will review your requirements and contact you.
             </p>
@@ -748,7 +687,7 @@ function Index() {
           </Accordion>
           <div className="mt-8 text-center">
             <Button variant="regalOutline" asChild>
-              <Link to="/reviews">All reviews & FAQs</Link>
+              <Link to="/reviews">More planning questions</Link>
             </Button>
           </div>
         </div>
@@ -764,11 +703,11 @@ function Index() {
             {[
               [
                 "Pure ingredients",
-                "Every sweet and dish is made in 100% pure desi ghee with premium dry fruits and fresh, in-house mawa.",
+                "Discuss ingredients, dietary preferences and preparation with our team when planning your menu.",
               ],
               [
                 "Master halwais",
-                "Led by Satyanarayan Prajapati, our team brings over a decade of authentic Marwari and Rajasthani recipes.",
+                "Discuss traditional Marwari and Rajasthani dishes with Satyanarayan Prajapati and the team.",
               ],
               [
                 "Complete setup",

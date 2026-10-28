@@ -77,6 +77,4 @@ export const BUSINESS_CONFIG = {
     instagram: "https://instagram.com/sattu__halwai",
     youtube: "https://youtube.com/@SattuhalwaiAjmer",
   },
-  experienceYears: "10+",
-  eventsServed: "500+",
 };

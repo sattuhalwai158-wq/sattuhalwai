@@ -5,6 +5,7 @@ import { PageIntro } from "@/components/site-shell";
 import { images } from "@/lib/content";
 import { buildPageHead, buildBreadcrumbSchema } from "@/components/seo";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { EnquiryBanner } from "@/components/page-sections";
 import { useMedia } from "@/lib/site-data";
 
 const founders = [
@@ -13,33 +14,27 @@ const founders = [
     nameHi: "नाथू जी प्रजापति",
     role: "FOUNDER",
     roleHi: "संस्थापक",
-    quote:
-      "“N SATTU CUISINE carries forward the legacy of our family’s culinary traditions, crafting dishes that reflect the richness of our heritage.”",
   },
   {
     name: "SATYANARAYAN PRAJAPATI",
     nameHi: "सत्यनारायण प्रजापति",
     role: "MANAGING DIRECTOR",
     roleHi: "प्रबंध निदेशक",
-    quote:
-      "“With a focus on quality and authenticity, N SATTU CUISINE creates memorable dining experiences that connect loved ones and enrich every occasion.”",
   },
   {
     name: "CHANCHAL PRAJAPATI",
     nameHi: "चंचल प्रजापति",
     role: "CEO",
     roleHi: "मुख्य कार्यकारी अधिकारी",
-    quote:
-      "“N SATTU CUISINE is dedicated to crafting exquisite dishes that bring people together, ensuring that every celebration is as unique as our clients.”",
   },
 ];
 
 export const Route = createFileRoute("/about")({
   head: () =>
     buildPageHead({
-      title: "About N Sattu Cuisine | 10+ Years of Catering Heritage in Ajmer",
+      title: "Our Story | N Sattu Cuisine, Ajmer",
       description:
-        "Meet founder Nathu Ji Prajapati, MD Satyanarayan Prajapati & CEO Chanchal Prajapati. Discover over a decade of authentic halwai mastery and royal wedding catering in Ajmer.",
+        "Meet founder Nathu Ji Prajapati, MD Satyanarayan Prajapati & CEO Chanchal Prajapati. Discover the family, food and approach to wedding catering behind N Sattu Cuisine in Ajmer.",
       path: "/about",
       ogImage: "/media/buffet-17.jpg",
       structuredData: [buildBreadcrumbSchema([{ name: "About Us", path: "/about" }])],
@@ -72,13 +67,13 @@ function About() {
       {/* ABOUT US SECTION */}
       <section className="px-5 py-20 lg:px-8">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
-          <div className="relative min-h-[500px] overflow-hidden border border-gold/30 bg-secondary p-3">
+          <div className="relative aspect-[4/5] max-h-[640px] overflow-hidden border border-gold/30 bg-secondary p-3">
             <img
               src={images.masterHalwai}
               width={1408}
               height={1600}
               loading="lazy"
-              alt="N-Sattu Cuisine team preparing a royal catering setup"
+              alt="N-Sattu Cuisine illuminated buffet presentation"
               className="size-full object-cover"
             />
             <div className="absolute inset-x-8 bottom-8 border-l-2 border-gold bg-background/95 p-5 shadow-soft">
@@ -134,7 +129,7 @@ function About() {
             <p className="text-xs font-bold uppercase tracking-[0.28em] text-gold">
               Founders • संस्थापक
             </p>
-            <h2 className="mt-3 font-display text-4xl sm:text-5xl">FOUNDERS</h2>
+            <h2 className="mt-3 font-display text-4xl sm:text-5xl">The family behind the feast.</h2>
             <div className="mx-auto mt-4 h-px w-20 bg-gold" />
             <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
               Carrying forward the richness of culinary heritage with authenticity, passion, and
@@ -160,14 +155,13 @@ function About() {
                     {founder.name}
                   </h3>
 
-                  <div className="mt-6">
-                    <span className="font-display text-4xl leading-none text-gold select-none">
-                      “
-                    </span>
-                    <blockquote className="mt-1 text-base italic leading-7 text-muted-foreground">
-                      {founder.quote.replace(/^[“”"]|[“”"]$/g, "")}
-                    </blockquote>
-                  </div>
+                  <p className="mt-6 text-sm leading-7 text-muted-foreground">
+                    {founder.role === "FOUNDER"
+                      ? "The family’s culinary traditions and the roots of N-Sattu Cuisine."
+                      : founder.role === "MANAGING DIRECTOR"
+                        ? "A focus on menu planning, quality and the details of event service."
+                        : "Bringing together the menu, presentation and hospitality for each occasion."}
+                  </p>
                 </div>
 
                 <div className="mt-8 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
@@ -188,14 +182,14 @@ function About() {
           <p className="text-xs font-bold uppercase text-primary">Our philosophy</p>
           <h2 className="mt-4 font-display text-5xl">स्वाद और विश्वास</h2>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">
-            Taste with trust means strict hygiene, non-adulterated dairy, in-house slow-roasted
-            mawa, Californian almonds and Afghani anjeer—handled with reverence.
+            Our approach begins with a conversation about your traditions, preferences and guests.
+            Together, we plan the food, presentation and service that suit your occasion.
           </p>
           <div className="mt-14 grid gap-4 md:grid-cols-3">
             {[
-              "Separate pure Jain cooking units",
-              "Daily small-batch mawa roasting",
-              "Brass cauldrons & traditional technique",
+              "Discuss your dietary requirements",
+              "Shape your menu with the team",
+              "Plan the presentation and service",
             ].map((x) => (
               <div key={x} className="border border-border p-8 font-display text-2xl">
                 {x}
@@ -256,6 +250,7 @@ function About() {
           </Button>
         </div>
       </section>
+      <EnquiryBanner />
     </>
   );
 }

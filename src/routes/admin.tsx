@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
 import { Loader2, LogOut, Trash2, Upload } from "lucide-react";
@@ -16,9 +16,12 @@ import {
   mediaSections,
   useAllMedia,
   useContent,
+  useContentQuery,
   type SiteMedia,
 } from "@/lib/site-data";
 
+import { QueryNotice } from "@/components/page-sections";
+import { Label } from "@/components/ui/label";
 import { buildPageHead } from "@/components/seo";
 
 export const Route = createFileRoute("/admin")({
@@ -32,43 +35,120 @@ export const Route = createFileRoute("/admin")({
   component: Admin,
 });
 
+function useAdminAction() {
+  const lock = useRef(false);
+  const [pending, setPending] = useState(false);
+  async function run(action: () => Promise<void>) {
+    if (lock.current) return;
+    lock.current = true;
+    setPending(true);
+    try {
+      await action();
+    } catch {
+      toast.error("The change couldn’t be completed. Check your connection and try again.");
+    } finally {
+      lock.current = false;
+      setPending(false);
+    }
+  }
+  return { pending, run };
+}
+
 function Admin() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
+  const [authError, setAuthError] = useState("");
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    let active = true;
+    let unsubscribe = () => {};
+    try {
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (active) {
+          setSession(session);
+          setIsAdmin(null);
+        }
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
+      void supabase.auth
+        .getSession()
+        .then(({ data, error }) => {
+          if (!active) return;
+          if (error) throw error;
+          setSession(data.session);
+          setReady(true);
+        })
+        .catch(() => {
+          if (active) {
+            setAuthError("Your session couldn’t be restored. Reload the page to try again.");
+            setReady(true);
+          }
+        });
+    } catch {
+      setAuthError("Admin sign-in is unavailable. Check the connection and reload the page.");
       setReady(true);
-    });
-    return () => sub.subscription.unsubscribe();
+    }
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    if (!session) {
-      setIsAdmin(null);
-      return;
+    let active = true;
+    setIsAdmin(null);
+    if (session) {
+      void (async () => {
+        try {
+          const { data, error } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", session.user.id)
+            .eq("role", "admin")
+            .abortSignal(AbortSignal.timeout(10000))
+            .maybeSingle();
+          if (error) throw error;
+          if (active) setIsAdmin(!!data);
+        } catch {
+          if (active) {
+            setIsAdmin(false);
+            setAuthError("We couldn’t verify admin access. Reload to try again.");
+          }
+        }
+      })();
     }
-    supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", session.user.id)
-      .eq("role", "admin")
-      .maybeSingle()
-      .then(({ data }) => setIsAdmin(!!data));
+    return () => {
+      active = false;
+    };
   }, [session]);
 
   return (
-    <section className="min-h-screen bg-muted px-5 pb-20 pt-36 lg:px-8">
+    <section className="admin-panel min-h-screen bg-muted px-5 pb-20 pt-36 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        {!ready ? (
-          <Loader2 className="mx-auto animate-spin text-primary" />
+        {authError ? (
+          <div
+            role="alert"
+            className="mx-auto max-w-lg rounded-lg border border-border bg-card p-8"
+          >
+            <h1 className="font-display text-3xl">Connection interrupted</h1>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">{authError}</p>
+            <Button className="mt-5" variant="royal" onClick={() => window.location.reload()}>
+              Reload page
+            </Button>
+          </div>
+        ) : !ready ? (
+          <p role="status" className="flex items-center justify-center gap-3 text-sm text-primary">
+            <Loader2 aria-hidden="true" className="size-5 animate-spin" />
+            Loading, please wait…
+          </p>
         ) : !session ? (
           <SignIn />
         ) : isAdmin === null ? (
-          <Loader2 className="mx-auto animate-spin text-primary" />
+          <p role="status" className="flex items-center justify-center gap-3 text-sm text-primary">
+            <Loader2 aria-hidden="true" className="size-5 animate-spin" />
+            Loading, please wait…
+          </p>
         ) : !isAdmin ? (
           <div className="mx-auto max-w-md bg-card p-8 text-center shadow-soft">
             <h1 className="font-display text-3xl">No admin access</h1>
@@ -91,38 +171,63 @@ function SignIn() {
   const [mode, setMode] = useState<"in" | "up">("in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (busy) return;
     setBusy(true);
-    const res =
-      mode === "in"
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({
-            email,
-            password,
-            options: { emailRedirectTo: `${window.location.origin}/admin` },
-          });
-    setBusy(false);
-    if (res.error) {
-      toast.error(res.error.message);
-      return;
+    setErrorMessage("");
+    setNotice("");
+    try {
+      const res =
+        mode === "in"
+          ? await supabase.auth.signInWithPassword({ email: email.trim(), password })
+          : await supabase.auth.signUp({
+              email: email.trim(),
+              password,
+              options: { emailRedirectTo: `${window.location.origin}/admin` },
+            });
+      if (res.error) {
+        setErrorMessage(res.error.message);
+        return;
+      }
+      if (mode === "up" && !res.data.session)
+        setNotice(
+          "Check your email to confirm your account. Admin permissions must be assigned before you can manage the website.",
+        );
+    } catch {
+      setErrorMessage("Sign-in couldn’t be completed. Check your connection and try again.");
+    } finally {
+      setBusy(false);
     }
-    if (mode === "up" && !res.data.session)
-      toast.success("Check your email to confirm your account.");
   }
+
   return (
-    <form onSubmit={submit} className="mx-auto max-w-md space-y-4 bg-card p-8 shadow-soft">
+    <form
+      onSubmit={submit}
+      aria-busy={busy}
+      className="mx-auto max-w-md space-y-4 rounded-lg border border-border bg-card p-6 shadow-soft sm:p-8"
+    >
       <h1 className="font-display text-4xl">Admin {mode === "in" ? "sign in" : "sign up"}</h1>
       <p className="text-sm text-muted-foreground">Manage website photos, videos and page text.</p>
+      <Label htmlFor="admin-email">Email address</Label>
       <Input
+        id="admin-email"
+        autoComplete="username"
+        disabled={busy}
         type="email"
         required
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
+      <Label htmlFor="admin-password">Password</Label>
       <Input
+        id="admin-password"
+        autoComplete={mode === "in" ? "current-password" : "new-password"}
+        disabled={busy}
         type="password"
         required
         minLength={6}
@@ -130,16 +235,31 @@ function SignIn() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      {errorMessage && (
+        <p role="alert" className="field-error">
+          {errorMessage}
+        </p>
+      )}
+      {notice && (
+        <p role="status" className="text-sm leading-7 text-primary">
+          {notice}
+        </p>
+      )}
       <Button variant="royal" className="w-full" disabled={busy}>
         {busy && <Loader2 className="animate-spin" />}
         {mode === "in" ? "Sign in" : "Create account"}
       </Button>
       <button
         type="button"
-        className="w-full text-sm text-primary"
-        onClick={() => setMode(mode === "in" ? "up" : "in")}
+        disabled={busy}
+        className="min-h-11 w-full text-sm text-primary"
+        onClick={() => {
+          setMode(mode === "in" ? "up" : "in");
+          setErrorMessage("");
+          setNotice("");
+        }}
       >
-        {mode === "in" ? "First time? Create the admin account" : "Have an account? Sign in"}
+        {mode === "in" ? "First time? Create an account" : "Have an account? Sign in"}
       </button>
     </form>
   );
@@ -153,7 +273,7 @@ function Dashboard({ email }: { email: string }) {
           <p className="font-display text-xl italic text-primary">Admin panel</p>
           <h1 className="font-display text-5xl">Website manager</h1>
         </div>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-3 break-all text-sm text-muted-foreground">
           {email}
           <Button size="sm" variant="outline" onClick={() => supabase.auth.signOut()}>
             <LogOut />
@@ -202,13 +322,21 @@ type Enquiry = {
 
 function Enquiries() {
   const qc = useQueryClient();
-  const { data = [], isLoading } = useQuery({
+  const { pending, run } = useAdminAction();
+  const {
+    data = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["booking_enquiries"],
-    queryFn: async () => {
+    retry: 1,
+    queryFn: async ({ signal }) => {
       const { data, error } = await supabase
         .from("booking_enquiries")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .abortSignal(AbortSignal.any([signal, AbortSignal.timeout(10000)]));
       if (error) throw error;
       return data as Enquiry[];
     },
@@ -231,7 +359,21 @@ function Enquiries() {
     qc.invalidateQueries({ queryKey: ["booking_enquiries"] });
   }
   const [editing, setEditing] = useState<Enquiry | "new" | null>(null);
-  if (isLoading) return <Loader2 className="mx-auto animate-spin text-primary" />;
+  if (isError)
+    return (
+      <QueryNotice
+        retry={() => {
+          void refetch();
+        }}
+      />
+    );
+  if (isLoading)
+    return (
+      <p role="status" className="flex items-center justify-center gap-3 text-sm text-primary">
+        <Loader2 aria-hidden="true" className="size-5 animate-spin" />
+        Loading, please wait…
+      </p>
+    );
   return (
     <div className="bg-card p-6 shadow-soft">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -281,8 +423,12 @@ function Enquiries() {
             </div>
             <div className="flex items-center gap-2">
               <select
+                aria-label={`Status for ${e.name}`}
                 value={e.status}
-                onChange={(ev) => setStatus(e.id, ev.target.value)}
+                disabled={pending}
+                onChange={(ev) => {
+                  void run(() => setStatus(e.id, ev.target.value));
+                }}
                 className="h-9 border border-input bg-background px-2 text-sm"
               >
                 <option value="new">New</option>
@@ -296,7 +442,10 @@ function Enquiries() {
               <Button
                 size="icon"
                 variant="outline"
-                onClick={() => remove(e.id)}
+                disabled={pending}
+                onClick={() => {
+                  void run(() => remove(e.id));
+                }}
                 aria-label="Delete"
               >
                 <Trash2 />
@@ -325,30 +474,37 @@ function BookingForm({ initial, onDone }: { initial: Enquiry | null; onDone: () 
     setF((p) => ({ ...p, [k]: e.target.value }));
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (busy) return;
     setBusy(true);
-    const row = {
-      name: f.name.trim(),
-      phone: f.phone.trim(),
-      event_type: f.event_type.trim() || "Event",
-      event_date: f.event_date || null,
-      city: f.city || null,
-      guests: f.guests ? Number(f.guests) : null,
-      cuisines: f.cuisines
-        .split(",")
-        .map((x) => x.trim())
-        .filter(Boolean),
-      status: f.status,
-    };
-    const { error } = initial
-      ? await supabase.from("booking_enquiries").update(row).eq("id", initial.id)
-      : await supabase.from("booking_enquiries").insert(row);
-    setBusy(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    try {
+      const row = {
+        name: f.name.trim(),
+        phone: f.phone.trim(),
+        event_type: f.event_type.trim() || "Event",
+        event_date: f.event_date || null,
+        city: f.city || null,
+        guests: f.guests ? Number(f.guests) : null,
+        cuisines: f.cuisines
+          .split(",")
+          .map((x) => x.trim())
+          .filter(Boolean),
+        status: f.status,
+      };
+      const { error } = initial
+        ? await supabase.from("booking_enquiries").update(row).eq("id", initial.id)
+        : await supabase.from("booking_enquiries").insert(row);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success(initial ? "Booking updated" : "Booking added");
+      onDone();
+    } catch {
+      toast.error("The booking couldn’t be saved. Your details are still here.");
+    } finally {
+      setBusy(false);
     }
-    toast.success(initial ? "Booking updated" : "Booking added");
-    onDone();
   }
   const lbl = "text-xs font-bold uppercase text-berry";
   return (
@@ -418,7 +574,7 @@ function BookingForm({ initial, onDone }: { initial: Enquiry | null; onDone: () 
         <Button variant="royal" disabled={busy}>
           {busy && <Loader2 className="animate-spin" />}Save booking
         </Button>
-        <Button type="button" variant="outline" onClick={onDone}>
+        <Button type="button" variant="outline" disabled={busy} onClick={onDone}>
           Cancel
         </Button>
       </div>
@@ -428,7 +584,7 @@ function BookingForm({ initial, onDone }: { initial: Enquiry | null; onDone: () 
 
 function MediaSection({ section, label }: { section: string; label: string }) {
   const qc = useQueryClient();
-  const { data = [] } = useAllMedia();
+  const { data = [], isLoading, isError, refetch } = useAllMedia();
   const items = data.filter((m) => m.section === section);
   const [busy, setBusy] = useState(false);
   const refresh = () => qc.invalidateQueries({ queryKey: ["site_media"] });
@@ -467,29 +623,51 @@ function MediaSection({ section, label }: { section: string; label: string }) {
     <div className="bg-card p-6 shadow-soft">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-display text-2xl">{label}</h2>
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+        <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md bg-primary focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 px-4 py-2 text-sm font-semibold text-primary-foreground">
           {busy ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}Add{" "}
           {section === "videos" ? "video" : "photos"}
           <input
             type="file"
             multiple
             accept={section === "videos" ? "video/*" : "image/*"}
-            className="hidden"
-            onChange={(e) => upload(e.target.files)}
+            className="sr-only"
+            disabled={busy}
+            aria-label={`Add media to ${label}`}
+            onChange={(e) => {
+              void upload(e.target.files);
+              e.target.value = "";
+            }}
           />
         </label>
       </div>
+      {isError && (
+        <QueryNotice
+          retry={() => {
+            void refetch();
+          }}
+        />
+      )}
+      {isLoading && (
+        <p role="status" className="mt-5 text-sm text-muted-foreground">
+          Loading media…
+        </p>
+      )}
       <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((m) => (
           <MediaCard key={m.id} item={m} onChange={refresh} />
         ))}
-        {!items.length && <p className="text-sm text-muted-foreground">Nothing here yet.</p>}
+        {!isLoading && !isError && !items.length && (
+          <p className="text-sm text-muted-foreground">
+            No media in this section. Add photos when ready.
+          </p>
+        )}
       </div>
     </div>
   );
 }
 
 function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }) {
+  const { pending, run } = useAdminAction();
   const [title, setTitle] = useState(item.title);
   const [caption, setCaption] = useState(item.caption);
   const [order, setOrder] = useState(String(item.sort_order));
@@ -516,9 +694,15 @@ function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }
     onChange();
   }
   return (
-    <div className="border border-border bg-background p-3">
+    <div className="rounded-lg border border-border bg-background p-3">
       {item.media_type === "video" ? (
-        <video src={item.url} muted className="aspect-square w-full object-cover" />
+        <video
+          src={item.url}
+          preload="none"
+          controls
+          muted
+          className="aspect-square w-full object-cover"
+        />
       ) : (
         <img src={item.url} alt={item.title} className="aspect-square w-full object-cover" />
       )}
@@ -526,12 +710,14 @@ function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }
         className="mt-3"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        aria-label="Media title"
         placeholder="Title"
       />
       <Input
         className="mt-2"
         value={caption}
         onChange={(e) => setCaption(e.target.value)}
+        aria-label="Media caption"
         placeholder="Caption"
       />
       <div className="mt-2 flex gap-2">
@@ -542,10 +728,26 @@ function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }
           onChange={(e) => setOrder(e.target.value)}
           aria-label="Order"
         />
-        <Button size="sm" variant="royal" className="flex-1" onClick={save}>
+        <Button
+          size="sm"
+          variant="royal"
+          className="flex-1"
+          disabled={pending}
+          onClick={() => {
+            void run(save);
+          }}
+        >
           Save
         </Button>
-        <Button size="icon" variant="outline" onClick={remove} aria-label="Delete">
+        <Button
+          size="icon"
+          variant="outline"
+          disabled={pending}
+          onClick={() => {
+            void run(remove);
+          }}
+          aria-label="Delete"
+        >
           <Trash2 />
         </Button>
       </div>
@@ -555,6 +757,8 @@ function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }
 
 function TextEditor() {
   const get = useContent();
+  const contentQuery = useContentQuery();
+  const { pending, run } = useAdminAction();
   const qc = useQueryClient();
   const [values, setValues] = useState<Record<string, string>>({});
   async function save(key: string, fallback: string) {
@@ -568,19 +772,42 @@ function TextEditor() {
     toast.success("Saved");
     qc.invalidateQueries({ queryKey: ["page_content"] });
   }
+  if (contentQuery.isError)
+    return (
+      <QueryNotice
+        retry={() => {
+          void contentQuery.refetch();
+        }}
+      />
+    );
+  if (contentQuery.isLoading)
+    return (
+      <p role="status" className="text-sm text-primary">
+        Loading page text…
+      </p>
+    );
   return (
     <div className="space-y-5 bg-card p-6 shadow-soft">
       {contentFields.map((f) => {
         const current = get(f.key, "");
         return (
           <div key={f.key}>
-            <label className="text-xs font-bold uppercase text-berry">{f.label}</label>
+            <label htmlFor={`text-${f.key}`} className="text-xs font-bold uppercase text-berry">
+              {f.label}
+            </label>
             <div className="mt-2 flex gap-2">
               <Textarea
+                id={`text-${f.key}`}
                 value={values[f.key] ?? current}
                 onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
               />
-              <Button variant="royal" onClick={() => save(f.key, current)}>
+              <Button
+                variant="royal"
+                disabled={pending}
+                onClick={() => {
+                  void run(() => save(f.key, current));
+                }}
+              >
                 Save
               </Button>
             </div>
@@ -592,9 +819,10 @@ function TextEditor() {
 }
 
 function ItemsManager() {
+  const { pending, run } = useAdminAction();
   const [kind, setKind] = useState(itemKinds[0]!.key);
   const def = itemKinds.find((k) => k.key === kind)!;
-  const { data = [], isLoading } = useAllItems();
+  const { data = [], isLoading, isError, refetch } = useAllItems();
   const qc = useQueryClient();
   const items = data.filter((i) => i.kind === kind);
   const refresh = () => qc.invalidateQueries({ queryKey: ["site_items"] });
@@ -627,6 +855,7 @@ function ItemsManager() {
         {itemKinds.map((k) => (
           <button
             key={k.key}
+            aria-pressed={kind === k.key}
             onClick={() => setKind(k.key)}
             className={`shrink-0 border px-4 py-3 text-left text-sm ${kind === k.key ? "border-primary bg-card font-semibold" : "border-border bg-background"}`}
           >
@@ -639,14 +868,32 @@ function ItemsManager() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="font-display text-2xl">{def.label}</h2>
-            <p className="text-xs text-muted-foreground">Shown on: {def.page}</p>
+            <p className="text-xs text-muted-foreground">Content area: {def.page}</p>
+            {(kind === "testimonial" || kind === "stat") && (
+              <p className="mt-3 max-w-xl text-sm leading-7 text-muted-foreground">
+                Saved records are retained here. Public reviews and statistics are paused until
+                their sources and permission to publish are verified.
+              </p>
+            )}
           </div>
-          <Button variant="royal" onClick={add}>
+          <Button
+            variant="royal"
+            disabled={pending}
+            onClick={() => {
+              void run(add);
+            }}
+          >
             <Plus />
             Add new
           </Button>
         </div>
-        {isLoading ? (
+        {isError ? (
+          <QueryNotice
+            retry={() => {
+              void refetch();
+            }}
+          />
+        ) : isLoading ? (
           <Loader2 className="mx-auto mt-6 animate-spin text-primary" />
         ) : (
           <div className="mt-5 space-y-4">
@@ -659,8 +906,20 @@ function ItemsManager() {
                 item={it}
                 fields={def.fields}
                 onChange={refresh}
-                onUp={idx > 0 ? () => move(idx, -1) : undefined}
-                onDown={idx < items.length - 1 ? () => move(idx, 1) : undefined}
+                onUp={
+                  idx > 0
+                    ? () => {
+                        void run(() => move(idx, -1));
+                      }
+                    : undefined
+                }
+                onDown={
+                  idx < items.length - 1
+                    ? () => {
+                        void run(() => move(idx, 1));
+                      }
+                    : undefined
+                }
               />
             ))}
           </div>
@@ -683,6 +942,7 @@ function ItemCard({
   onUp?: (() => void) | undefined;
   onDown?: (() => void) | undefined;
 }) {
+  const { pending, run } = useAdminAction();
   const [vals, setVals] = useState<ItemData>(item.data ?? {});
   const [busy, setBusy] = useState(false);
   const set = (k: keyof ItemData, v: string) => setVals((p) => ({ ...p, [k]: v }));
@@ -726,56 +986,90 @@ function ItemCard({
     <div className="border border-border bg-background p-4">
       <div className="grid gap-3 sm:grid-cols-2">
         {fields.map((f) => (
-          <label
+          <div
             key={f.key}
-            className={`text-xs font-bold uppercase text-berry ${f.type === "long" || f.type === "image" ? "sm:col-span-2" : ""}`}
+            className={f.type === "long" || f.type === "image" ? "sm:col-span-2" : ""}
           >
-            {f.label}
+            <label
+              htmlFor={`item-${item.id}-${f.key}`}
+              className="text-xs font-bold uppercase text-berry"
+            >
+              {f.label}
+            </label>
             {f.type === "long" ? (
               <Textarea
-                className="mt-1 font-normal normal-case text-foreground"
+                id={`item-${item.id}-${f.key}`}
+                className="mt-2"
+                disabled={pending}
                 value={vals[f.key] ?? ""}
-                onChange={(e) => set(f.key, e.target.value)}
+                onChange={(event) => set(f.key, event.target.value)}
               />
             ) : f.type === "image" ? (
-              <div className="mt-1 flex items-center gap-3">
-                {vals[f.key] && <img src={vals[f.key]} alt="" className="size-16 object-cover" />}
-                <label className="inline-flex cursor-pointer items-center gap-2 border border-border px-3 py-2 text-xs font-semibold normal-case text-foreground">
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                {vals[f.key] && (
+                  <img
+                    src={vals[f.key]}
+                    alt={vals.title || "Current item photo"}
+                    loading="lazy"
+                    className="size-20 rounded-md object-cover"
+                  />
+                )}
+                <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                   {busy ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : (
                     <Upload className="size-4" />
                   )}
-                  {vals[f.key] ? "Change photo" : "Upload photo"}
+                  {vals[f.key] ? "Choose a different photo" : "Upload photo"}
                   <input
+                    id={`item-${item.id}-${f.key}`}
                     type="file"
                     accept="image/*"
-                    className="hidden"
-                    onChange={(e) => upload(f.key, e.target.files?.[0])}
+                    className="sr-only"
+                    disabled={busy || pending}
+                    onChange={(event) => {
+                      void upload(f.key, event.target.files?.[0]);
+                      event.target.value = "";
+                    }}
                   />
                 </label>
               </div>
             ) : (
               <Input
-                className="mt-1 font-normal normal-case text-foreground"
+                id={`item-${item.id}-${f.key}`}
+                className="mt-2"
+                disabled={pending}
                 value={vals[f.key] ?? ""}
-                onChange={(e) => set(f.key, e.target.value)}
+                onChange={(event) => set(f.key, event.target.value)}
               />
             )}
-          </label>
+          </div>
         ))}
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <Button size="sm" variant="royal" onClick={save}>
+        <Button
+          size="sm"
+          variant="royal"
+          disabled={busy || pending}
+          onClick={() => {
+            void run(save);
+          }}
+        >
           Save
         </Button>
-        <Button size="icon" variant="outline" disabled={!onUp} onClick={onUp} aria-label="Move up">
+        <Button
+          size="icon"
+          variant="outline"
+          disabled={!onUp || pending}
+          onClick={onUp}
+          aria-label="Move up"
+        >
           <ArrowUp />
         </Button>
         <Button
           size="icon"
           variant="outline"
-          disabled={!onDown}
+          disabled={!onDown || pending}
           onClick={onDown}
           aria-label="Move down"
         >
@@ -785,7 +1079,10 @@ function ItemCard({
           size="icon"
           variant="outline"
           className="ml-auto"
-          onClick={remove}
+          disabled={busy || pending}
+          onClick={() => {
+            void run(remove);
+          }}
           aria-label="Delete"
         >
           <Trash2 />

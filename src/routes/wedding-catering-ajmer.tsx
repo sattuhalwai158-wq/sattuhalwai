@@ -53,7 +53,7 @@ const faqs = [
   {
     question: "What is the guest capacity you can accommodate?",
     answer:
-      "We cater gatherings of all scales, from intimate pre-wedding functions of 100 guests to grand wedding celebrations exceeding 5,000 guests with flawless hospitality.",
+      "Share your guest estimate, event dates and venue with our team so we can confirm an appropriate service plan.",
   },
 ];
 
@@ -62,7 +62,7 @@ export const Route = createFileRoute("/wedding-catering-ajmer")({
     buildPageHead({
       title: "Wedding Caterers in Ajmer | Royal Catering | N Sattu Cuisine",
       description:
-        "Looking for wedding caterers in Ajmer? N Sattu Cuisine provides authentic Rajasthani banquets, pure desi ghee halwai sweets & palace buffet setups for 100 to 5,000+ guests.",
+        "Looking for wedding caterers in Ajmer? N Sattu Cuisine provides authentic Rajasthani banquets, pure desi ghee halwai sweets & palace buffet setups for weddings and family celebrations.",
       path: "/wedding-catering-ajmer",
       ogImage: "/media/buffet-6.jpg",
       structuredData: [
@@ -111,20 +111,20 @@ function WeddingCateringAjmer() {
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
               Generations of Hospitality • अजमेर की शान
             </span>
-            <h1 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
+            <h2 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
               Wedding Catering Services in Ajmer Crafted for Royally Memorable Feasts.
-            </h1>
+            </h2>
             <p className="mt-6 text-base leading-8 text-muted-foreground">
               A wedding feast in Rajasthan is more than a meal; it is a sacred tradition of
               welcoming family and honored guests. At <strong>N Sattu Cuisine</strong> (also fondly
               known as <strong>Sattu Halwai</strong>), our culinary lineage under the guidance of
-              Nathu Ji Prajapati, Satyanarayan Prajapati, and Chanchal Prajapati brings over a
-              decade of time-tested mastery to your most auspicious day.
+              Nathu Ji Prajapati, Satyanarayan Prajapati, and Chanchal Prajapati brings traditional
+              recipes and personal hospitality to your celebration.
             </p>
             <p className="mt-4 text-base leading-8 text-muted-foreground">
               Whether you are hosting an intimate Sagan or Sangeet banquet in Panchsheel or a royal
-              3,000-guest wedding reception along Anasagar Circular Road, we deliver precision,
-              warmth, and unforgettable culinary craftsmanship.
+              wedding reception along Anasagar Circular Road, we deliver precision, warmth, and
+              unforgettable culinary craftsmanship.
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -443,12 +443,12 @@ function WeddingCateringAjmer() {
       </section>
 
       {/* Call to Action Bar */}
-      <section className="border-t border-gold/30 bg-obsidian text-primary-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">
             Begin Planning Your Ajmer Celebration
           </h2>
-          <p className="mt-4 text-sm text-primary-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
             Secure your dates with Satyanarayan Prajapati and our dedicated culinary team. We invite
             you to an exclusive tasting session at our kitchen.
           </p>

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import { getPublicContentClient } from "@/lib/public-content-client";
 
 export type SiteMedia = {
   id: string;
@@ -28,19 +28,32 @@ export const contentFields = [
   { key: "setups_copy", label: "Luxury Setups intro text" },
 ] as const;
 
-export function useAllMedia() {
+// The homepage loader and client observers share one cache contract. Loading
+// media before SSR prevents a bundled photo from flashing before CMS photos.
+export const siteMediaQueryOptions = queryOptions({
+  queryKey: ["site_media"],
+  staleTime: 5 * 60 * 1000,
+  retry: 0,
+  queryFn: async ({ signal }) => {
+    const { data, error } = await getPublicContentClient()
+      .from("site_media")
+      .select("*")
+      .order("sort_order")
+      .abortSignal(AbortSignal.any([signal, AbortSignal.timeout(3000)]));
+    if (error) throw error;
+    return (data ?? []) as SiteMedia[];
+  },
+});
+
+export function useAllMedia(initialData?: SiteMedia[]) {
   return useQuery({
-    queryKey: ["site_media"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("site_media").select("*").order("sort_order");
-      if (error) throw error;
-      return (data ?? []) as SiteMedia[];
-    },
+    ...siteMediaQueryOptions,
+    ...(initialData ? { initialData } : {}),
   });
 }
 
-export function useMedia(section: string) {
-  const q = useAllMedia();
+export function useMedia(section: string, initialData?: SiteMedia[]) {
+  const q = useAllMedia(initialData);
   const seen = new Set<string>();
   return (q.data ?? []).filter((media) => {
     if (media.section !== section || seen.has(media.url)) return false;
@@ -49,11 +62,16 @@ export function useMedia(section: string) {
   });
 }
 
-export function useContent() {
-  const q = useQuery({
+export function useContentQuery() {
+  return useQuery({
     queryKey: ["page_content"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("page_content").select("key,value");
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    queryFn: async ({ signal }) => {
+      const { data, error } = await getPublicContentClient()
+        .from("page_content")
+        .select("key,value")
+        .abortSignal(AbortSignal.any([signal, AbortSignal.timeout(8000)]));
       if (error) throw error;
       return Object.fromEntries((data ?? []).map((r) => [r.key, r.value])) as Record<
         string,
@@ -61,5 +79,9 @@ export function useContent() {
       >;
     },
   });
+}
+
+export function useContent() {
+  const q = useContentQuery();
   return (key: string, fallback: string) => q.data?.[key] || fallback;
 }

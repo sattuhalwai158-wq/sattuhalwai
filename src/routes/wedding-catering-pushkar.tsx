@@ -110,9 +110,9 @@ function WeddingCateringPushkar() {
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
               Sacred Heritage & Palatial Flavors • पुष्कर की पवित्र भूमि
             </span>
-            <h1 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
+            <h2 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
               Luxury Destination Wedding Caterers Serving Pushkar Resorts & Camps.
-            </h1>
+            </h2>
             <p className="mt-6 text-base leading-8 text-muted-foreground">
               Pushkar is celebrated globally as one of India's most enchanting destination wedding
               venues. From palatial desert resorts on the outskirts to tranquil garden venues near
@@ -333,10 +333,10 @@ function WeddingCateringPushkar() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-gold/30 bg-obsidian text-primary-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">Enquire for Your Pushkar Wedding</h2>
-          <p className="mt-4 text-sm text-primary-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
             Connect with our wedding catering concierge today to review dates, menus, and logistics
             for your Pushkar celebration.
           </p>

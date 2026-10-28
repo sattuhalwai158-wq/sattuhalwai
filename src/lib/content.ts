@@ -1,4 +1,4 @@
-const delicacies = "/media/sweet-rose-platter.jpg";
+const delicacies = "/media/home-mithai.webp";
 const liveCounter = "/media/live-dosa-counter.jpg";
 const masterHalwai = "/media/buffet-17.jpg";
 const banquet = "/media/buffet-6.jpg";
@@ -22,7 +22,7 @@ export const dishes = [
     description:
       "Rose-coated dry-fruit mithai with a bright kesar centre, arranged around a handcrafted sugar rose.",
     tags: ["Pure Desi Ghee", "Chef Signature"],
-    image: "/media/rose-sweet-slices.jpg",
+    image: "/media/home-slices.webp",
     position: "50% 50%",
     pairing: "Masala chai, kahwa or rose milk.",
   },
@@ -33,7 +33,7 @@ export const dishes = [
     description:
       "Golden mawa cups crowned with rose-flavoured mithai and finished for wedding service.",
     tags: ["Pure Desi Ghee", "Chef Signature"],
-    image: "/media/rose-sweet-cups-2.jpg",
+    image: "/media/home-cups.webp",
     position: "50% 50%",
     pairing: "Kesar milk or masala chai.",
   },
@@ -108,21 +108,21 @@ export const setups = [
     category: "LED Buffet Staging",
     image: "/media/buffet-6.jpg",
     position: "50% 50%",
-    detail: "Ajmer • Winter wedding • 1,200 guests",
+    detail: "Ajmer • Winter wedding",
   },
   {
     title: "Live Dosa Counter",
     category: "Live Counters & Theatrics",
     image: "/media/live-dosa-counter.jpg",
     position: "50% 50%",
-    detail: "Pushkar • Sangeet supper • 650 guests",
+    detail: "Pushkar • Sangeet supper",
   },
   {
     title: "Brass & Kulhad Service",
     category: "Royal Serveware",
     image: "/media/buffet-28.jpg",
     position: "50% 50%",
-    detail: "Pushkar • Palace reception • 900 guests",
+    detail: "Pushkar • Palace reception",
   },
   {
     title: "Royal Wedding Thali",
@@ -136,52 +136,13 @@ export const setups = [
     category: "LED Buffet Staging",
     image: "/media/night-stalls.jpg",
     position: "50% 50%",
-    detail: "Kishangarh • Wedding brunch • 800 guests",
+    detail: "Kishangarh • Wedding brunch",
   },
   {
     title: "Rose Mithai Platter",
     category: "Royal Serveware",
     image: "/media/rose-sweet-cups.jpg",
     position: "50% 50%",
-    detail: "Ajmer • Engagement evening • 500 guests",
+    detail: "Ajmer • Engagement evening",
   },
-];
-
-export const testimonials = [
-  [
-    "The food arrived piping hot at every table. Our guests still speak about the dal baati and live jalebi.",
-    "Ritika & Arjun",
-    "Pushkar wedding",
-    "November 2025",
-  ],
-  [
-    "They understood our palace venue instantly. The brass buffet became part of the décor, not just service.",
-    "Meera Shah",
-    "Ajmer reception",
-    "February 2026",
-  ],
-  [
-    "Every Jain counter was truly separate and beautifully presented. Our family felt completely looked after.",
-    "Devanshi & Rohan",
-    "Ajmer wedding",
-    "December 2025",
-  ],
-  [
-    "From tasting to the final plate, their team was calm, precise and generous. The mithai was exceptional.",
-    "Ishita Jain",
-    "Kishangarh celebration",
-    "January 2026",
-  ],
-  [
-    "Guests gathered around the live counters all evening. It gave the celebration wonderful energy.",
-    "Kunal & Naina",
-    "Pushkar sangeet",
-    "March 2026",
-  ],
-  [
-    "The flavours felt deeply traditional, yet the presentation was worthy of an international luxury event.",
-    "Aarav Mehta",
-    "Pushkar destination wedding",
-    "April 2026",
-  ],
 ];
