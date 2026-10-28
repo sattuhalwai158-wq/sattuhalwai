@@ -46,11 +46,19 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // Reloading, navigating away or cancelling a media request can close the
+    // connection. A cancelled request should not become an application 500.
+    if (request.signal.aborted) return new Response(null, { status: 499 });
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
+      if (request.signal.aborted) {
+        await response.body?.cancel().catch(() => {});
+        return new Response(null, { status: 499 });
+      }
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
+      if (request.signal.aborted) return new Response(null, { status: 499 });
       console.error(error);
       return new Response(renderErrorPage(), {
         status: 500,
