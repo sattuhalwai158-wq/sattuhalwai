@@ -29,6 +29,7 @@ type Item = {
   image: string;
   position: string;
   detail: string;
+  alt?: string;
 };
 
 function Setups() {
@@ -41,6 +42,7 @@ function Setups() {
     image: x.image ?? "",
     position: "50% 50%",
     detail: (x.detail ?? "").replace(/(?:\s*[•·]\s*)?[\d,]+\+?\s+guests/gi, ""),
+    alt: x.title,
   }));
   const seenImages = new Set(setupItems.map((item) => item.image));
   const all: Item[] = [
@@ -53,6 +55,7 @@ function Setups() {
         image: m.url,
         position: "50% 50%",
         detail: m.caption,
+        alt: m.alt_text || m.title,
       })),
   ];
   const categories = useItems("setup_category");
@@ -132,7 +135,7 @@ function Setups() {
                   width={1600}
                   height={1200}
                   loading="lazy"
-                  alt={`${s.title} - ${s.category} catering setup in Ajmer`}
+                  alt={s.alt || `${s.title} - ${s.category} catering setup in Ajmer`}
                   className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
                   style={{ objectPosition: s.position }}
                 />

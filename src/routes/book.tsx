@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { PageIntro } from "@/components/site-shell";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { buildPageHead, buildBreadcrumbSchema } from "@/components/seo";
-import { BUSINESS_CONFIG as business } from "@/lib/site-config";
+import { useSiteSettings } from "@/lib/site-settings";
 import {
   bookingSteps,
   cities,
@@ -43,6 +43,7 @@ export const Route = createFileRoute("/book")({
 });
 
 function Book() {
+  const business = useSiteSettings();
   const [step, setStep] = useState(1);
   const [data, setData] = useState<BookingData>({ ...initialBooking, cuisines: [] });
   const [errors, setErrors] = useState<BookingErrors>({});
@@ -458,7 +459,7 @@ function Book() {
                 Prefer a conversation?
               </p>
               <h2 className="mt-4 font-display text-3xl">Talk to our catering team.</h2>
-              {[business.telephone, business.secondaryTelephone].map((phone) => (
+              {[business.telephone, business.secondaryTelephone].filter(Boolean).map((phone) => (
                 <a
                   key={phone}
                   href={`tel:${phone.replace(/\s/g, "")}`}

@@ -1,5 +1,7 @@
 # Sattu Halwai redesign and validation
 
+> Historical report from the earlier redesign phase. Later owner CMS and review changes added migrations and changed the admin layout. Earlier check results do not validate those later changes. See [current validation status](validation-status.md), [owner guide](admin-guide.md), and [database documentation](database.md).
+
 ## Implemented
 
 - Burgundy, warm ivory and antique-gold tokens, responsive typography and spacing, clear focus indicators and reduced-motion styles in `src/styles.css`.

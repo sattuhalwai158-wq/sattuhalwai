@@ -6,7 +6,7 @@ import { images } from "@/lib/content";
 import { buildPageHead, buildBreadcrumbSchema } from "@/components/seo";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { EnquiryBanner } from "@/components/page-sections";
-import { useMedia } from "@/lib/site-data";
+import { useContent, useMedia } from "@/lib/site-data";
 
 const founders = [
   {
@@ -44,6 +44,7 @@ export const Route = createFileRoute("/about")({
 
 function About() {
   const journey = useMedia("journey");
+  const text = useContent();
   const locations = [
     { city: "Ajmer", hi: "अजमेर" },
     { city: "Pushkar", hi: "पुष्कर" },
@@ -54,8 +55,8 @@ function About() {
     <>
       <PageIntro
         eyebrow="Our royal heritage • हमारी विरासत"
-        title="A legacy tempered over generations."
-        copy="At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have been passed down through generations, crafting exquisite dishes for grand weddings and intimate celebrations."
+        title={text("about_title", "A legacy tempered over generations.")}
+        copy={text("about_intro", "At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have been passed down through generations, crafting exquisite dishes for grand weddings and intimate celebrations.")}
       />
 
       <div className="border-b border-border bg-secondary/40 px-5 py-4 lg:px-8">
@@ -88,15 +89,11 @@ function About() {
               About Us • हमारे बारे में
             </p>
             <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
-              Authentic, home-style flavors passed down through generations.
+              {text("about_story_title", "Authentic, home-style flavors passed down through generations.")}
             </h2>
             <div className="mt-5 h-px w-20 bg-gold" />
             <p className="mt-7 text-lg leading-8 text-muted-foreground">
-              At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have
-              been passed down through generations. We are committed to making every event memorable
-              with delectable dishes crafted from the finest ingredients. Whether it's a grand
-              wedding, a corporate gathering, or an intimate celebration, we deliver exceptional
-              food and unmatched service, tailored to your needs.
+              {text("about_story_copy", "At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have been passed down through generations. Whether it is a wedding, a corporate gathering or an intimate celebration, we plan the food and service around your needs.")}
             </p>
             <blockquote className="mt-6 border-l-2 border-gold bg-secondary/50 p-5 font-display text-xl italic text-foreground">
               “Let us make your special moments even more delightful with our exquisite cuisine!”
@@ -182,8 +179,7 @@ function About() {
           <p className="text-xs font-bold uppercase text-primary">Our philosophy</p>
           <h2 className="mt-4 font-display text-5xl">स्वाद और विश्वास</h2>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">
-            Our approach begins with a conversation about your traditions, preferences and guests.
-            Together, we plan the food, presentation and service that suit your occasion.
+            {text("about_philosophy", "Our approach begins with a conversation about your traditions, preferences and guests. Together, we plan the food, presentation and service that suit your occasion.")}
           </p>
           <div className="mt-14 grid gap-4 md:grid-cols-3">
             {[
@@ -214,7 +210,7 @@ function About() {
                 <figure key={media.url} className="bg-card p-3 shadow-soft">
                   <img
                     src={media.url}
-                    alt={media.title}
+                    alt={media.alt_text || media.title}
                     loading="lazy"
                     className="aspect-square w-full object-cover"
                   />

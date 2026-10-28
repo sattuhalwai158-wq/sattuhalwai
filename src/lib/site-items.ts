@@ -22,7 +22,7 @@ type ItemKey =
   | "label"
   | "place";
 export type ItemData = { [K in ItemKey]?: string | undefined };
-export type SiteItem = { id: string; kind: string; data: ItemData; sort_order: number };
+export type SiteItem = { id: string; kind: string; data: ItemData; sort_order: number; published?: boolean };
 
 type Field = { key: ItemKey; label: string; type?: "text" | "long" | "image" };
 
@@ -91,6 +91,7 @@ export const itemKinds: { key: string; label: string; page: string; fields: Fiel
     fields: [
       { key: "title", label: "Title" },
       { key: "hi", label: "Hindi label" },
+      { key: "description", label: "Service description", type: "long" },
       { key: "image", label: "Photo", type: "image" },
     ],
   },
@@ -197,6 +198,11 @@ export function useAllItems() {
 export function useItems(kind: string): ItemData[] {
   const q = useAllItems();
   if (!q.data) return defaultItems[kind] ?? [];
-  const items = q.data.filter((i) => i.kind === kind).map((i) => i.data);
-  return kind === "faq" ? items.filter((item) => !/how many guests/i.test(item.q ?? "")) : items;
+  const items = q.data.filter((i) => i.kind === kind && i.published !== false).map((i) => i.data);
+  if(kind === "dish" || kind === "setup") {
+    const categoryKind=kind === "dish"?"menu_category":"setup_category";
+    const categories=new Set(q.data.filter(item=>item.kind === categoryKind && item.published !== false).map(item=>item.data.name));
+    return items.filter(item=>categories.has(item.category));
+  }
+  return items;
 }

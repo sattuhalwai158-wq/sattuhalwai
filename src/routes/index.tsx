@@ -19,30 +19,25 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { PublishedReviews } from "@/components/customer-reviews";
 import { Button } from "@/components/ui/button";
 import { useItems } from "@/lib/site-items";
 import { buildPageHead, buildLocalBusinessSchema } from "@/components/seo";
-import { siteMediaQueryOptions, useContent, useMedia } from "@/lib/site-data";
+import { pageContentQueryOptions, siteMediaQueryOptions, useContent, useMedia } from "@/lib/site-data";
 
 export const Route = createFileRoute("/")({
-  loader: async ({ context }) => {
-    try {
-      return await context.queryClient.ensureQueryData(siteMediaQueryOptions);
-    } catch {
-      // On failure, use a stable fallback collection for this visit instead of
-      // immediately swapping images again during hydration.
-      return [];
-    }
+  loader: async ({context})=>{
+    const [media,content]=await Promise.all([
+      context.queryClient.ensureQueryData(siteMediaQueryOptions).catch(()=>[]),
+      context.queryClient.ensureQueryData(pageContentQueryOptions).catch(()=>({} as Record<string,string>)),
+    ]);
+    return {media,content};
   },
-  head: () =>
-    buildPageHead({
-      title: "Wedding Caterers in Ajmer | N Sattu Cuisine",
-      description:
-        "Premier wedding caterers in Ajmer, Pushkar & Kishangarh by N Sattu Cuisine. Authentic Rajasthani banquets, pure desi ghee sweets, live food stalls & royal palace buffet setups.",
-      path: "/",
-      ogImage: "/media/buffet-6.jpg",
-      structuredData: [buildLocalBusinessSchema()],
-    }),
+  head: ({loaderData})=>buildPageHead({
+    title:loaderData?.content["site_title"] || "Wedding Caterers in Ajmer | N Sattu Cuisine",
+    description:loaderData?.content["site_description"] || "Premier wedding caterers in Ajmer, Pushkar & Kishangarh by N Sattu Cuisine. Rajasthani banquets, mithai and live counters.",
+    path:"/",ogImage:loaderData?.content["site_og_image"] || "/media/buffet-6.jpg",structuredData:[buildLocalBusinessSchema()],
+  }),
   component: Index,
 });
 
@@ -145,7 +140,7 @@ const process = [
 ] as const;
 
 function Index() {
-  const initialMedia = Route.useLoaderData();
+  const initialMedia = Route.useLoaderData().media;
   const heroMedia = useMedia("hero", initialMedia);
   const signatures = useMedia("signatures", initialMedia);
   const journey = useMedia("journey", initialMedia);
@@ -159,7 +154,7 @@ function Index() {
   const heroImages = heroMedia.filter((m) => m.media_type === "image");
   const slides = heroImages.length
     ? heroImages.map((m) => m.url)
-    : ["/media/home-mithai.webp", "/media/home-thali.webp", "/media/home-live-counter.webp"];
+    : ["/media/home-thali.webp", "/media/home-live-counter.webp", "/media/home-hospitality.webp"];
   const [slide, setSlide] = useState(0);
   const [paused, setPaused] = useState(true);
   // Live CMS content may replace the fallback slides with a shorter collection.
@@ -182,6 +177,7 @@ function Index() {
         image: m.url,
         title: m.title || "Chef signature",
         label: m.caption || "Signature mithai",
+        alt: m.alt_text || m.title || "Signature cuisine",
         position: "50% 50%",
       }))
     : dishes.slice(0, 3).map((d) => ({
@@ -189,10 +185,11 @@ function Index() {
         image: d.image ?? "",
         title: d.title ?? "",
         label: d.local ?? "",
+        alt: d.title ?? "Cuisine",
         position: "50% 50%",
       }));
   const services = useItems("service").map(
-    (x, i) => [serviceIcons[i % 4] ?? Gem, x.title, x.hi, x.image] as const,
+    (x, i) => [serviceIcons[i % 4] ?? Gem, x.title, x.hi, x.image, x.description] as const,
   );
   return (
     <>
@@ -217,11 +214,11 @@ function Index() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button variant="royal" size="lg" className="h-12 px-6" asChild>
                 <Link to="/book">
-                  Plan your celebration <ArrowRight />
+                  {text("home_primary_cta", "Plan your celebration")} <ArrowRight />
                 </Link>
               </Button>
               <Button variant="regalOutline" size="lg" className="h-12 px-6" asChild>
-                <Link to="/menus">Explore our menus</Link>
+                <Link to="/menus">{text("home_secondary_cta", "Explore our menus")}</Link>
               </Button>
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 border-t border-border pt-6 text-xs font-medium text-muted-foreground">
@@ -241,9 +238,9 @@ function Index() {
                 alt={
                   heroImages[activeSlide]?.title ||
                   [
-                    "Handcrafted rose and kesar mithai by N-Sattu Cuisine",
                     "Traditional Rajasthani celebration thali",
                     "Freshly prepared live food counter",
+                    "Warm hospitality at a N-Sattu Cuisine celebration",
                   ][activeSlide]
                 }
                 width={900}
@@ -253,8 +250,8 @@ function Index() {
                 decoding="async"
                 className="size-full object-cover"
                 onError={(event) => {
-                  if (!event.currentTarget.src.endsWith("/media/home-mithai.webp"))
-                    event.currentTarget.src = "/media/home-mithai.webp";
+                  if (!event.currentTarget.src.endsWith("/media/home-thali.webp"))
+                    event.currentTarget.src = "/media/home-thali.webp";
                 }}
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-hero-ink/90 to-transparent px-7 pb-7 pt-20 text-hero-foreground">
@@ -336,14 +333,11 @@ function Index() {
               Our story • हमारी कहानी
             </p>
             <h2 className="mt-4 max-w-xl font-display text-4xl leading-tight sm:text-5xl">
-              A family-led legacy of royal hospitality.
+              {text("home_story_title", "A family-led legacy of royal hospitality.")}
             </h2>
             <div className="mt-5 h-px w-20 bg-gold" />
             <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground">
-              At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have
-              been passed down through generations. We are committed to making every event memorable
-              with delectable dishes crafted from the finest ingredients and unmatched service
-              tailored to your needs.
+              {text("home_story_copy", "At N SATTU CUISINE, we take pride in serving authentic, home-style flavors that have               been passed down through generations. We are committed to making every event memorable               with delectable dishes crafted from the finest ingredients and unmatched service               tailored to your needs.")}
             </p>
             <div className="mt-9 grid gap-4 sm:grid-cols-3">
               <div className="border-l-2 border-gold bg-secondary p-4">
@@ -377,12 +371,13 @@ function Index() {
         </div>
       </section>
 
+      <PublishedReviews featured />
       <section className="px-6 py-24 lg:py-32">
         <div className="mx-auto max-w-7xl">
           <SectionTitle
             eyebrow="Signature creations • खास पकवान"
-            title="Crafted for the royal table."
-            copy="Discover our mithai, celebration plates and live-counter favourites. Discuss your preferences with our team."
+            title={text("home_signature_title", "Crafted for the royal table.")}
+            copy={text("home_signature_copy", "Discover our mithai, celebration plates and live-counter favourites. Discuss your preferences with our team.")}
           />
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((f) => (
@@ -403,10 +398,10 @@ function Index() {
         <div className="mx-auto max-w-7xl">
           <SectionTitle
             eyebrow="Our services • हमारी सेवाएँ"
-            title="Everything your celebration needs."
+            title={text("home_services_title", "Everything your celebration needs.")}
           />
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map(([Icon, title, hi, image]) => (
+            {services.map(([Icon, title, hi, image, description]) => (
               <Link
                 key={title}
                 to="/setups"
@@ -424,6 +419,7 @@ function Index() {
                   <Icon className="size-5 text-gold" />
                   <h3 className="mt-3 font-display text-2xl">{title}</h3>
                   <p className="text-sm text-berry">{hi}</p>
+                  {description && <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">{description}</p>}
                   <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
                     Explore more <ArrowRight className="size-3.5" />
                   </span>
@@ -458,7 +454,7 @@ function Index() {
         <div className="mx-auto max-w-7xl">
           <SectionTitle
             eyebrow="Gallery • सजावट और लाइव काउंटर"
-            title="Luxury setups & live theatrics."
+            title={text("home_gallery_title", "Luxury setups & live theatrics.")}
           />
           <div className="mt-14 grid auto-rows-[240px] gap-4 md:grid-cols-3">
             {setups.slice(0, 6).map((setup, index) => (
@@ -493,7 +489,7 @@ function Index() {
                   <figure key={m.id} className="w-60 shrink-0 snap-start">
                     <img
                       src={m.url}
-                      alt={m.title}
+                      alt={m.alt_text || m.title}
                       loading="lazy"
                       className="aspect-square w-full object-cover"
                     />
@@ -556,7 +552,7 @@ function Index() {
         <div className="mx-auto max-w-7xl">
           <SectionTitle
             eyebrow="Where we serve • अजमेर, पुष्कर, किशनगढ़"
-            title="Celebrations across our home region."
+            title={text("home_areas_title", "Celebrations across our home region.")}
             copy="Tailored wedding catering, authentic halwai bhattis, and live palatial buffet staging across Ajmer, Pushkar, and Kishangarh."
           />
           <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -647,11 +643,10 @@ function Index() {
               Enquiry • पूछताछ
             </p>
             <h2 className="mt-4 font-display text-4xl leading-tight text-hero-foreground sm:text-5xl">
-              Start planning your royal feast.
+              {text("home_booking_title", "Start planning your royal feast.")}
             </h2>
             <p className="mt-5 leading-7 text-hero-foreground/75">
-              Share your event details through our booking form. Satyanarayan Prajapati and team
-              will review your requirements and contact you.
+              {text("home_booking_copy", "Share your event details through our booking form. Our team will review your requirements and contact you.")}
             </p>
           </div>
           <div className="border border-gold/30 bg-background p-8 shadow-lift sm:p-10">
@@ -665,7 +660,7 @@ function Index() {
             </p>
             <Button variant="royal" size="lg" className="mt-7 w-full" asChild>
               <Link to="/book">
-                Open booking form <ArrowRight />
+                {text("home_booking_cta", "Open booking form")} <ArrowRight />
               </Link>
             </Button>
           </div>

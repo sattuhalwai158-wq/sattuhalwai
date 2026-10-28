@@ -1,5 +1,7 @@
 # N-Sattu Cuisine
 
+Project documentation is collected in [docs/README.md](docs/README.md), including setup, architecture, the owner dashboard, database migrations, troubleshooting, deployment, and validation status.
+
 Luxury wedding and event catering website for N-Sattu Cuisine, serving celebrations across Ajmer, Pushkar, Kishangarh, and the surrounding region.
 
 The site presents the brand story, menus, catering setups, reviews, booking enquiries, and legal information through a responsive web experience.

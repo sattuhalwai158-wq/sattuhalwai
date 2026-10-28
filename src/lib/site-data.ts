@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { getPublicContentClient } from "@/lib/public-content-client";
 
@@ -10,6 +11,8 @@ export type SiteMedia = {
   title: string;
   caption: string;
   sort_order: number;
+  published?: boolean;
+  alt_text?: string;
 };
 
 export const mediaSections = [
@@ -56,32 +59,25 @@ export function useMedia(section: string, initialData?: SiteMedia[]) {
   const q = useAllMedia(initialData);
   const seen = new Set<string>();
   return (q.data ?? []).filter((media) => {
-    if (media.section !== section || seen.has(media.url)) return false;
+    if (media.published === false || media.section !== section || seen.has(media.url)) return false;
     seen.add(media.url);
     return true;
   });
 }
 
+export const PageContentContext = createContext<Record<string,string>|undefined>(undefined);
+export const pageContentQueryOptions = queryOptions({
+  queryKey:["page_content"],staleTime:5*60*1000,retry:0,
+  queryFn:async({signal})=>{
+    const {data,error}=await getPublicContentClient().from("page_content").select("key,value").abortSignal(AbortSignal.any([signal,AbortSignal.timeout(3000)]));
+    if(error)throw error;return Object.fromEntries((data??[]).map(row=>[row.key,row.value])) as Record<string,string>;
+  }
+});
 export function useContentQuery() {
-  return useQuery({
-    queryKey: ["page_content"],
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-    queryFn: async ({ signal }) => {
-      const { data, error } = await getPublicContentClient()
-        .from("page_content")
-        .select("key,value")
-        .abortSignal(AbortSignal.any([signal, AbortSignal.timeout(8000)]));
-      if (error) throw error;
-      return Object.fromEntries((data ?? []).map((r) => [r.key, r.value])) as Record<
-        string,
-        string
-      >;
-    },
-  });
+ const initialData=useContext(PageContentContext);
+ return useQuery({...pageContentQueryOptions,...(initialData?{initialData}:{})});
 }
-
 export function useContent() {
-  const q = useContentQuery();
-  return (key: string, fallback: string) => q.data?.[key] || fallback;
+ const q=useContentQuery();
+ return (key:string,fallback:string)=>q.data && Object.prototype.hasOwnProperty.call(q.data,key)?q.data[key]!:fallback;
 }

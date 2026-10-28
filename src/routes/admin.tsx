@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
@@ -9,17 +9,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { itemKinds, useAllItems, type ItemData, type SiteItem } from "@/lib/site-items";
+import { itemKinds, type ItemData, type SiteItem } from "@/lib/site-items";
 import { ArrowDown, ArrowUp, Plus } from "lucide-react";
 import {
   contentFields,
   mediaSections,
-  useAllMedia,
   useContent,
   useContentQuery,
   type SiteMedia,
 } from "@/lib/site-data";
 
+import { AdminOverview } from "@/components/admin/overview";
+import { ContentEditor } from "@/components/admin/content-editor";
+import { ReviewManager } from "@/components/admin/review-manager";
+import { useAdminItems, useAdminMedia, useRefreshContent } from "@/lib/admin-data";
+import { validateUpload } from "@/lib/uploads";
 import { QueryNotice } from "@/components/page-sections";
 import { Label } from "@/components/ui/label";
 import { buildPageHead } from "@/components/seo";
@@ -124,7 +128,7 @@ function Admin() {
   }, [session]);
 
   return (
-    <section className="admin-panel min-h-screen bg-muted px-5 pb-20 pt-36 lg:px-8">
+    <section className="admin-panel min-h-screen bg-muted px-4 pb-16 pt-8 lg:px-8">
       <div className="mx-auto max-w-6xl">
         {authError ? (
           <div
@@ -265,46 +269,28 @@ function SignIn() {
   );
 }
 
-function Dashboard({ email }: { email: string }) {
-  return (
-    <>
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="font-display text-xl italic text-primary">Admin panel</p>
-          <h1 className="font-display text-5xl">Website manager</h1>
-        </div>
-        <div className="flex flex-wrap items-center gap-3 break-all text-sm text-muted-foreground">
-          {email}
-          <Button size="sm" variant="outline" onClick={() => supabase.auth.signOut()}>
-            <LogOut />
-            Sign out
-          </Button>
-        </div>
-      </div>
-      <Tabs defaultValue="enquiries">
-        <TabsList>
-          <TabsTrigger value="enquiries">Bookings</TabsTrigger>
-          <TabsTrigger value="items">Menus, reviews & more</TabsTrigger>
-          <TabsTrigger value="media">Photos & videos</TabsTrigger>
-          <TabsTrigger value="text">Page text</TabsTrigger>
-        </TabsList>
-        <TabsContent value="enquiries" className="mt-6">
-          <Enquiries />
-        </TabsContent>
-        <TabsContent value="items" className="mt-6">
-          <ItemsManager />
-        </TabsContent>
-        <TabsContent value="media" className="mt-6 space-y-10">
-          {mediaSections.map((s) => (
-            <MediaSection key={s.key} section={s.key} label={s.label} />
-          ))}
-        </TabsContent>
-        <TabsContent value="text" className="mt-6">
-          <TextEditor />
-        </TabsContent>
-      </Tabs>
-    </>
-  );
+const ownerSections = [
+ ["dashboard","Dashboard"],["bookings","Booking enquiries"],["menus","Menus & dishes"],["setups","Catering setups"],["gallery","Gallery & photos"],["reviews","Customer reviews"],["faqs","FAQs"],["services","Services & locations"],["home","Homepage content"],["about","About page"],["contact","Contact information"],["settings","Website settings"],["account","Account & security"],
+] as const;
+function Dashboard({email}:{email:string}) {
+ const [section,setSection]=useState("dashboard");
+ const title=ownerSections.find(([key])=>key===section)?.[1]??"Dashboard";
+ const go=(next:string)=>{if(document.querySelector('[data-unsaved="true"]')&&!confirm("You have unsaved changes. Leave this section without saving?"))return;setSection(next);window.scrollTo({top:0});};
+ return <><header className="mb-7 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5"><Link to="/admin" className="font-display text-2xl font-semibold text-primary">N-Sattu Cuisine <span className="ml-2 font-sans text-xs font-normal text-muted-foreground">Website manager</span></Link><div className="flex gap-2"><Button variant="outline" asChild><a href="/" target="_blank" rel="noreferrer">View website ↗</a></Button><Button variant="ghost" onClick={()=>{void supabase.auth.signOut();}}><LogOut/>Sign out</Button></div></header>
+ <div className="grid items-start gap-7 lg:grid-cols-[225px_minmax(0,1fr)]"><aside className="lg:sticky lg:top-6"><label htmlFor="owner-section" className="mb-2 block text-xs font-semibold uppercase tracking-wider text-primary lg:hidden">Manage your website</label><select id="owner-section" className="w-full border border-input bg-card px-3 text-sm lg:hidden" value={section} onChange={event=>go(event.target.value)}>{ownerSections.map(([key,label])=><option key={key} value={key}>{label}</option>)}</select><nav aria-label="Website management" className="hidden space-y-1 rounded-lg border border-border bg-card p-3 lg:block">{ownerSections.map(([key,label])=><button key={key} aria-current={section===key?'page':undefined} onClick={()=>go(key)} className={`flex min-h-11 w-full items-center rounded-md px-3 py-2.5 text-left text-sm ${section===key?'bg-primary text-primary-foreground':'text-muted-foreground hover:bg-secondary hover:text-primary'}`}>{label}</button>)}</nav></aside>
+ <div className="min-w-0"><p className="text-xs text-muted-foreground">Website manager / {title}</p><h1 className="mb-6 mt-3 font-display text-4xl">{title}</h1>
+ {section==='dashboard'&&<AdminOverview go={go}/>}
+ {section==='bookings'&&<Enquiries/>}
+ {section==='menus'&&<ItemsManager key="menus" kinds={['menu_category','dish']}/>}
+ {section==='setups'&&<ItemsManager key="setups" kinds={['setup_category','setup']}/>}
+ {section==='faqs'&&<ItemsManager key="faqs" kinds={['faq']}/>}
+ {section==='services'&&<ItemsManager key="services" kinds={['service','destination']}/>}
+ {section==='gallery'&&<div className="space-y-7"><p className="text-sm leading-7 text-muted-foreground">Each group controls the photos shown in that part of your website. Use display order to choose which appears first.</p>{mediaSections.map(item=><MediaSection key={item.key} section={item.key} label={item.label}/>)}</div>}
+ {section==='reviews'&&<ReviewManager/>}
+ {['home','about','contact','settings'].includes(section)&&<ContentEditor key={section} group={section}/>}
+ {section==='home'&&<div className="mt-7 space-y-7"><MediaSection section="hero" label="Homepage hero photos"/><MediaSection section="signatures" label="Signature cuisine photos"/></div>}
+ {section==='account'&&<div className="rounded-lg border border-border bg-card p-7"><h2 className="font-display text-3xl">Your account</h2><p className="mt-5 break-all text-sm">Signed in as {email}</p><p className="mt-4 text-sm leading-7 text-muted-foreground">Only approved website administrators can manage content, enquiries and customer reviews. Signing up does not give a new account administrative access.</p><p className="mt-4 text-sm leading-7 text-muted-foreground">Keep your password private and sign out when using a shared device. For access changes, contact the person who manages your website.</p><Button className="mt-6" variant="outline" onClick={()=>{void supabase.auth.signOut();}}>Sign out of this account</Button></div>}
+ </div></div></>;
 }
 
 type Enquiry = {
@@ -359,6 +345,26 @@ function Enquiries() {
     qc.invalidateQueries({ queryKey: ["booking_enquiries"] });
   }
   const [editing, setEditing] = useState<Enquiry | "new" | null>(null);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sort, setSort] = useState<"newest" | "oldest" | "event">("newest");
+  const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<Enquiry | null>(null);
+  const pageSize = 8;
+  const filtered = data
+    .filter((e) => statusFilter === "all" || e.status === statusFilter)
+    .filter((e) => {
+      const haystack = [e.name, e.phone, e.city, e.event_type, ...(e.cuisines ?? [])].join(" ").toLowerCase();
+      return haystack.includes(query.trim().toLowerCase());
+    })
+    .sort((a, b) => {
+      if (sort === "oldest") return a.created_at.localeCompare(b.created_at);
+      if (sort === "event") return (a.event_date ?? "9999").localeCompare(b.event_date ?? "9999");
+      return b.created_at.localeCompare(a.created_at);
+    });
+  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const visible = filtered.slice((page - 1) * pageSize, page * pageSize);
+  useEffect(() => setPage(1), [query, statusFilter, sort]);
   if (isError)
     return (
       <QueryNotice
@@ -383,6 +389,15 @@ function Enquiries() {
           Add booking
         </Button>
       </div>
+      <div className="mt-5 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+        <Input aria-label="Search booking enquiries" placeholder="Search name, phone, city or event" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <select aria-label="Filter booking status" className="h-10 border border-input bg-background px-2 text-sm" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="all">All statuses</option><option value="new">New</option><option value="called">Called</option><option value="confirmed">Confirmed</option><option value="closed">Closed</option>
+        </select>
+        <select aria-label="Sort bookings" className="h-10 border border-input bg-background px-2 text-sm" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
+          <option value="newest">Newest received</option><option value="oldest">Oldest received</option><option value="event">Upcoming event date</option>
+        </select>
+      </div>
       {editing && (
         <BookingForm
           initial={editing === "new" ? null : editing}
@@ -398,7 +413,7 @@ function Enquiries() {
         </p>
       )}
       <div className="mt-5 space-y-4">
-        {data.map((e) => (
+        {visible.map((e) => (
           <div
             key={e.id}
             className="flex flex-wrap items-start justify-between gap-4 border border-border bg-background p-5"
@@ -439,6 +454,7 @@ function Enquiries() {
               <Button size="sm" variant="outline" onClick={() => setEditing(e)}>
                 Edit
               </Button>
+              <Button size="sm" variant="ghost" onClick={() => setSelected(e)}>Details</Button>
               <Button
                 size="icon"
                 variant="outline"
@@ -454,6 +470,8 @@ function Enquiries() {
           </div>
         ))}
       </div>
+      {filtered.length > pageSize && <div className="mt-5 flex items-center justify-between gap-3 text-sm text-muted-foreground"><span>Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)} of {filtered.length}</span><div className="flex gap-2"><Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>Previous</Button><Button size="sm" variant="outline" disabled={page >= pageCount} onClick={() => setPage((p) => p + 1)}>Next</Button></div></div>}
+      {selected && <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" onClick={() => setSelected(null)}><div className="max-h-[90vh] w-full max-w-xl overflow-auto bg-card p-6 shadow-xl" onClick={(e) => e.stopPropagation()}><div className="flex items-start justify-between gap-4"><h3 className="font-display text-2xl">Booking details</h3><Button variant="ghost" onClick={() => setSelected(null)}>Close</Button></div><dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2"><div><dt className="text-muted-foreground">Name</dt><dd>{selected.name}</dd></div><div><dt className="text-muted-foreground">Phone</dt><dd><a className="text-primary" href={`tel:${selected.phone.replace(/\s/g, "")}`}>{selected.phone}</a></dd></div><div><dt className="text-muted-foreground">Event</dt><dd>{selected.event_type}</dd></div><div><dt className="text-muted-foreground">Date</dt><dd>{selected.event_date || "Not set"}</dd></div><div><dt className="text-muted-foreground">City</dt><dd>{selected.city || "Not set"}</dd></div><div><dt className="text-muted-foreground">Guests</dt><dd>{selected.guests ?? "Not set"}</dd></div><div className="sm:col-span-2"><dt className="text-muted-foreground">Food choices</dt><dd>{(selected.cuisines ?? []).join(", ") || "Not set"}</dd></div><div><dt className="text-muted-foreground">Received</dt><dd>{new Date(selected.created_at).toLocaleString("en-IN")}</dd></div><div><dt className="text-muted-foreground">Status</dt><dd className="capitalize">{selected.status}</dd></div></dl></div></div>}
     </div>
   );
 }
@@ -470,20 +488,29 @@ function BookingForm({ initial, onDone }: { initial: Enquiry | null; onDone: () 
     status: initial?.status ?? "new",
   });
   const [busy, setBusy] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setF((p) => ({ ...p, [k]: e.target.value }));
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
+    setErrorMessage("");
+    const name = f.name.trim();
+    const phone = f.phone.trim();
+    const guests = f.guests ? Number(f.guests) : null;
+    if (name.length < 2) return setErrorMessage("Enter the customer’s name.");
+    if (!/^[+\d][\d\s().-]{7,}$/.test(phone)) return setErrorMessage("Enter a valid phone number.");
+    if (guests !== null && (!Number.isInteger(guests) || guests < 1 || guests > 10000)) return setErrorMessage("Guests must be a whole number between 1 and 10,000.");
+    if (f.event_date && f.event_date < new Date().toISOString().slice(0, 10)) return setErrorMessage("Event date cannot be in the past.");
     setBusy(true);
     try {
       const row = {
-        name: f.name.trim(),
-        phone: f.phone.trim(),
+        name,
+        phone,
         event_type: f.event_type.trim() || "Event",
         event_date: f.event_date || null,
         city: f.city || null,
-        guests: f.guests ? Number(f.guests) : null,
+        guests,
         cuisines: f.cuisines
           .split(",")
           .map((x) => x.trim())
@@ -515,6 +542,7 @@ function BookingForm({ initial, onDone }: { initial: Enquiry | null; onDone: () 
       <p className="font-display text-xl sm:col-span-2">
         {initial ? "Edit booking" : "New booking"}
       </p>
+      {errorMessage && <p role="alert" className="field-error sm:col-span-2">{errorMessage}</p>}
       <label className={lbl}>
         Name
         <Input required className="mt-1" value={f.name} onChange={set("name")} />
@@ -582,99 +610,44 @@ function BookingForm({ initial, onDone }: { initial: Enquiry | null; onDone: () 
   );
 }
 
-function MediaSection({ section, label }: { section: string; label: string }) {
-  const qc = useQueryClient();
-  const { data = [], isLoading, isError, refetch } = useAllMedia();
-  const items = data.filter((m) => m.section === section);
-  const [busy, setBusy] = useState(false);
-  const refresh = () => qc.invalidateQueries({ queryKey: ["site_media"] });
-
-  async function upload(files: FileList | null) {
-    if (!files?.length) return;
-    setBusy(true);
-    try {
-      for (const file of Array.from(files)) {
-        const path = `${section}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "-")}`;
-        const up = await supabase.storage.from("site-media").upload(path, file);
-        if (up.error) throw up.error;
-        const signed = await supabase.storage
-          .from("site-media")
-          .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
-        if (signed.error) throw signed.error;
-        const { error } = await supabase.from("site_media").insert({
-          section,
-          storage_path: path,
-          url: signed.data.signedUrl,
-          media_type: file.type.startsWith("video") ? "video" : "image",
-          title: file.name.replace(/\.[^.]+$/, ""),
-          sort_order: items.length + 1,
-        });
-        if (error) throw error;
-      }
-      toast.success("Uploaded");
-    } catch (e) {
-      toast.error((e as Error).message);
-    }
-    setBusy(false);
-    refresh();
-  }
-
-  return (
-    <div className="bg-card p-6 shadow-soft">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-2xl">{label}</h2>
-        <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md bg-primary focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 px-4 py-2 text-sm font-semibold text-primary-foreground">
-          {busy ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}Add{" "}
-          {section === "videos" ? "video" : "photos"}
-          <input
-            type="file"
-            multiple
-            accept={section === "videos" ? "video/*" : "image/*"}
-            className="sr-only"
-            disabled={busy}
-            aria-label={`Add media to ${label}`}
-            onChange={(e) => {
-              void upload(e.target.files);
-              e.target.value = "";
-            }}
-          />
-        </label>
-      </div>
-      {isError && (
-        <QueryNotice
-          retry={() => {
-            void refetch();
-          }}
-        />
-      )}
-      {isLoading && (
-        <p role="status" className="mt-5 text-sm text-muted-foreground">
-          Loading media…
-        </p>
-      )}
-      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((m) => (
-          <MediaCard key={m.id} item={m} onChange={refresh} />
-        ))}
-        {!isLoading && !isError && !items.length && (
-          <p className="text-sm text-muted-foreground">
-            No media in this section. Add photos when ready.
-          </p>
-        )}
-      </div>
-    </div>
-  );
+function MediaSection({section,label}:{section:string;label:string}) {
+ const query=useAdminMedia();const items=(query.data??[]).filter(item=>item.section===section);
+ const refresh=useRefreshContent();const {pending,run}=useAdminAction();
+ const [queue,setQueue]=useState<File[]>([]);const [previews,setPreviews]=useState<string[]>([]);const [progress,setProgress]=useState(0);const [publish,setPublish]=useState(true);
+ useEffect(()=>{const urls=queue.map(file=>URL.createObjectURL(file));setPreviews(urls);return()=>urls.forEach(url=>URL.revokeObjectURL(url));},[queue]);
+ async function upload(){
+  let completed=0;setProgress(0);
+  try {
+   let nextOrder=Math.max(0,...items.map(item=>item.sort_order))+1;
+   for(const file of queue){
+    const path=`${section}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.]/g,'-')}`;
+    const up=await supabase.storage.from('site-media').upload(path,file);if(up.error)throw up.error;
+    const signed=await supabase.storage.from('site-media').createSignedUrl(path,60*60*24*365*10);if(signed.error)throw signed.error;
+    const title=file.name.replace(/\.[^.]+$/,'');
+    const result=await supabase.from('site_media').insert({section,storage_path:path,url:signed.data.signedUrl,media_type:section==='videos'?'video':'image',title,alt_text:title,sort_order:nextOrder++,published:publish});if(result.error)throw result.error;
+    completed++;setProgress(completed);
+   }
+   toast.success(publish?'Upload complete. Your photos are on the website.':'Upload complete. Saved as hidden drafts.');
+  } finally {if(completed)setQueue(current=>current.slice(completed));await refresh();}
+ }
+ return <div data-unsaved={queue.length>0} className="rounded-lg border border-border bg-card p-5 sm:p-7"><div className="flex flex-wrap items-center justify-between gap-4"><div><h2 className="font-display text-2xl">{label}</h2><p className="mt-2 text-xs leading-6 text-muted-foreground">{section==='videos'?'MP4 or WebM · Up to 25 MB each':'JPG, PNG, WebP or AVIF · Up to 10 MB each'}. Existing photos stay unchanged until you save or remove them.</p></div><label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-primary px-4 py-2 text-sm font-semibold text-primary focus-within:ring-2 focus-within:ring-ring"><Upload className="size-4"/>Choose {section==='videos'?'videos':'photos'}<input type="file" multiple className="sr-only" disabled={pending} accept={section==='videos'?'video/mp4,video/webm':'image/jpeg,image/png,image/webp,image/avif'} onChange={event=>{const files=Array.from(event.target.files??[]);if(files.length>20){toast.error('Choose up to 20 files at a time.');return;}for(const file of files){const error=validateUpload(file,section==='videos');if(error){toast.error(`${file.name}: ${error}`);event.target.value='';return;}}setQueue(files);event.target.value='';}}/></label></div>
+ {queue.length>0&&<div className="mt-6 rounded-md border border-border bg-secondary/30 p-4"><p className="text-sm font-semibold">Ready to upload · {queue.length} files</p><div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">{queue.map((file,index)=><figure key={`${file.name}-${index}`}>{section==='videos'?<video src={previews[index]} controls preload="metadata" className="aspect-square w-full rounded-md object-cover"/>:<img src={previews[index]} alt={`Preview of ${file.name}`} className="aspect-square w-full rounded-md object-cover"/>}<figcaption className="mt-2 break-all text-xs">{file.name}</figcaption></figure>)}</div><label className="mt-4 flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" checked={publish} disabled={pending} onChange={event=>setPublish(event.target.checked)} className="accent-primary"/>Show on website after upload</label><div className="mt-4 flex flex-wrap gap-3"><Button variant="royal" disabled={pending} onClick={()=>{void run(upload);}}>{pending?'Uploading…':'Upload selected files'}</Button><Button variant="outline" disabled={pending} onClick={()=>setQueue([])}>Cancel selection</Button></div>{pending&&<p role="progressbar" aria-label="Files uploaded" aria-valuemin={0} aria-valuemax={queue.length} aria-valuenow={progress} className="mt-3 text-sm">{progress} of {queue.length} uploaded</p>}</div>}
+ {query.isError&&<QueryNotice retry={()=>{void query.refetch();}}/>}{query.isPending&&<p role="status" className="mt-5 text-sm">Loading photos…</p>}<div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{items.map(item=><MediaCard key={item.id} item={item} onChange={()=>{void refresh();}}/>)}</div>{!query.isPending&&!query.isError&&!items.length&&<p className="mt-5 rounded-md bg-secondary p-5 text-sm text-muted-foreground">No photos in this group yet. Choose files above to get started.</p>}</div>;
 }
 
 function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }) {
   const { pending, run } = useAdminAction();
+  const [published,setPublished] = useState(item.published !== false);
+  const [alt,setAlt] = useState(item.alt_text ?? item.title);
   const [title, setTitle] = useState(item.title);
   const [caption, setCaption] = useState(item.caption);
   const [order, setOrder] = useState(String(item.sort_order));
+  const dirty = published !== (item.published !== false) || alt !== (item.alt_text ?? item.title) || title !== item.title || caption !== item.caption || order !== String(item.sort_order);
+  useEffect(() => { if (!dirty) return; const handler = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; }; window.addEventListener("beforeunload", handler); return () => window.removeEventListener("beforeunload", handler); }, [dirty]);
   async function save() {
     const { error } = await supabase
       .from("site_media")
-      .update({ title, caption, sort_order: Number(order) || 0 })
+      .update({ title, caption, alt_text:alt, published, sort_order: Number(order) || 0 })
       .eq("id", item.id);
     if (error) {
       toast.error(error.message);
@@ -684,8 +657,7 @@ function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }
     onChange();
   }
   async function remove() {
-    if (!confirm("Delete this item from the website?")) return;
-    if (item.storage_path) await supabase.storage.from("site-media").remove([item.storage_path]);
+    if (!confirm("Remove this photo from this website section? The uploaded file will be kept so other sections can continue using it.")) return;
     const { error } = await supabase.from("site_media").delete().eq("id", item.id);
     if (error) {
       toast.error(error.message);
@@ -694,7 +666,7 @@ function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }
     onChange();
   }
   return (
-    <div className="rounded-lg border border-border bg-background p-3">
+    <div data-unsaved={dirty} className="rounded-lg border border-border bg-background p-3">
       {item.media_type === "video" ? (
         <video
           src={item.url}
@@ -706,21 +678,24 @@ function MediaCard({ item, onChange }: { item: SiteMedia; onChange: () => void }
       ) : (
         <img src={item.url} alt={item.title} className="aspect-square w-full object-cover" />
       )}
-      <Input
-        className="mt-3"
+      <p className="mt-3 text-xs font-semibold text-primary">{published?"Shown on website":"Hidden from website"}</p>
+      <label className="mt-3 block text-xs font-medium">Photo title<Input
+        className="mt-1"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         aria-label="Media title"
         placeholder="Title"
-      />
-      <Input
-        className="mt-2"
+      /></label>
+      <label className="mt-3 block text-xs font-medium">Caption<Input
+        className="mt-1"
         value={caption}
         onChange={(e) => setCaption(e.target.value)}
         aria-label="Media caption"
         placeholder="Caption"
-      />
-      <div className="mt-2 flex gap-2">
+      /></label>
+      <label className="mt-3 block text-xs font-medium">Image description for accessibility<Input value={alt} onChange={event=>setAlt(event.target.value)} className="mt-1"/></label>
+      <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={published} onChange={event=>setPublished(event.target.checked)} className="accent-primary"/>Show on website after saving</label>
+      <div className="mt-2 flex flex-wrap gap-2">
         <Input
           className="w-20"
           type="number"
@@ -818,19 +793,19 @@ function TextEditor() {
   );
 }
 
-function ItemsManager() {
+function ItemsManager({kinds}:{kinds:string[]}) {
   const { pending, run } = useAdminAction();
-  const [kind, setKind] = useState(itemKinds[0]!.key);
+  const [kind, setKind] = useState(kinds[0] ?? "dish");
   const def = itemKinds.find((k) => k.key === kind)!;
-  const { data = [], isLoading, isError, refetch } = useAllItems();
+  const { data = [], isLoading, isError, refetch } = useAdminItems();
   const qc = useQueryClient();
   const items = data.filter((i) => i.kind === kind);
-  const refresh = () => qc.invalidateQueries({ queryKey: ["site_items"] });
+  const refresh = useRefreshContent();
   async function add() {
     const max = items.reduce((m, i) => Math.max(m, i.sort_order), 0);
     const { error } = await supabase
       .from("site_items")
-      .insert({ kind, data: {}, sort_order: max + 1 });
+      .insert({ kind, data: {}, sort_order: max + 1, published:false });
     if (error) {
       toast.error(error.message);
       return;
@@ -842,17 +817,19 @@ function ItemsManager() {
     const a = items[idx],
       b = items[idx + dir];
     if (!a || !b) return;
-    await supabase.from("site_items").update({ sort_order: b.sort_order }).eq("id", a.id);
-    await supabase
+    const first = await supabase.from("site_items").update({ sort_order: b.sort_order }).eq("id", a.id);
+    if(first.error)throw first.error;
+    const second = await supabase
       .from("site_items")
       .update({ sort_order: a.sort_order === b.sort_order ? a.sort_order + dir : a.sort_order })
       .eq("id", b.id);
+    if(second.error)throw second.error;
     refresh();
   }
   return (
     <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
       <nav className="flex gap-2 overflow-x-auto lg:flex-col">
-        {itemKinds.map((k) => (
+        {itemKinds.filter(k=>kinds.includes(k.key)).map((k) => (
           <button
             key={k.key}
             aria-pressed={kind === k.key}
@@ -943,20 +920,35 @@ function ItemCard({
   onDown?: (() => void) | undefined;
 }) {
   const { pending, run } = useAdminAction();
+  const catalog = useAdminItems();
+  const [published,setPublished] = useState(item.published !== false);
+  const [failure,setFailure] = useState("");
   const [vals, setVals] = useState<ItemData>(item.data ?? {});
   const [busy, setBusy] = useState(false);
   const set = (k: keyof ItemData, v: string) => setVals((p) => ({ ...p, [k]: v }));
+  const dirty=JSON.stringify(vals)!==JSON.stringify(item.data) || published !== (item.published !== false);
+  useEffect(()=>{if(!dirty)return;const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();};window.addEventListener("beforeunload",warn);return()=>window.removeEventListener("beforeunload",warn);},[dirty]);
+  const categoryKind=item.kind === "dish"?"menu_category":"setup_category";
+  const categories=(catalog.data??[]).filter(record=>record.kind === categoryKind && record.data.name);
   async function save() {
-    const { error } = await supabase.from("site_items").update({ data: vals }).eq("id", item.id);
+    setFailure("");
+    const required=item.kind.endsWith("_category")?["name"]:item.kind === "faq"?["q","a"]:item.kind === "destination"?["place"]:["title"];
+    if(published && required.some(key=>!vals[key as keyof ItemData]?.trim())) {setFailure("Complete the required name or text before publishing. You can save it as a draft instead.");return;}
+    if(published && ["dish","setup"].includes(item.kind) && !categories.some(category=>category.data.name === vals.category)){setFailure("Choose an existing category before publishing.");return;}
+    const { error } = await supabase.from("site_items").update({ data: vals, published }).eq("id", item.id);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success("Saved — live on the website");
+    toast.success(published ? "Saved and shown on the website." : "Draft saved. Hidden from visitors.");
     onChange();
   }
   async function remove() {
-    if (!confirm("Delete this item from the website?")) return;
+    if(item.kind.endsWith("_category")) {
+      const childKind=item.kind === "menu_category"?"dish":"setup";
+      if((catalog.data??[]).some(record=>record.kind===childKind && record.data.category===item.data.name)){toast.error("Move the items in this category to another category before deleting it.");return;}
+    }
+    if (!confirm("Permanently delete this item? Use Hide from website to keep it for later.")) return;
     const { error } = await supabase.from("site_items").delete().eq("id", item.id);
     if (error) {
       toast.error(error.message);
@@ -966,9 +958,10 @@ function ItemCard({
   }
   async function upload(k: keyof ItemData, file?: File) {
     if (!file) return;
+    const invalid=validateUpload(file);if(invalid){toast.error(invalid);return;}
     setBusy(true);
     try {
-      const path = `items/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "-")}`;
+      const path = `items/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "-")}`;
       const up = await supabase.storage.from("site-media").upload(path, file);
       if (up.error) throw up.error;
       const signed = await supabase.storage
@@ -983,7 +976,8 @@ function ItemCard({
     setBusy(false);
   }
   return (
-    <div className="border border-border bg-background p-4">
+    <div data-unsaved={dirty} className="rounded-lg border border-border bg-background p-4">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><p className="text-xs font-semibold text-primary">{published?"Shown on website":"Draft · Hidden from website"}</p><label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={published} onChange={event=>setPublished(event.target.checked)} className="accent-primary"/>Show on website after saving</label></div>
       <div className="grid gap-3 sm:grid-cols-2">
         {fields.map((f) => (
           <div
@@ -996,7 +990,7 @@ function ItemCard({
             >
               {f.label}
             </label>
-            {f.type === "long" ? (
+            {f.key === "category" ? <select id={`item-${item.id}-${f.key}`} value={vals.category??""} disabled={pending} onChange={event=>set("category",event.target.value)} className="mt-2 w-full border border-input bg-card px-3 text-sm"><option value="">Choose a category</option>{categories.map(category=><option key={category.id}>{category.data.name}</option>)}</select> : f.type === "long" ? (
               <Textarea
                 id={`item-${item.id}-${f.key}`}
                 className="mt-2"
@@ -1046,6 +1040,8 @@ function ItemCard({
           </div>
         ))}
       </div>
+      {failure && <p role="alert" className="field-error">{failure}</p>}
+      <details className="mt-5 rounded-md border border-border p-4"><summary className="cursor-pointer text-sm font-semibold">Preview this item</summary>{vals.image && <img src={vals.image} alt={vals.title || "Item preview"} className="mt-4 aspect-[4/3] w-full max-w-sm rounded-md object-cover"/>}<p className="mt-3 font-display text-2xl">{vals.title || vals.name || vals.q || vals.place || "Untitled draft"}</p><p className="mt-2 text-sm leading-7 text-muted-foreground">{vals.description || vals.a || vals.detail || ""}</p></details>
       <div className="mt-4 flex flex-wrap gap-2">
         <Button
           size="sm"
@@ -1055,7 +1051,7 @@ function ItemCard({
             void run(save);
           }}
         >
-          Save
+          {pending?"Saving…":"Save changes"}
         </Button>
         <Button
           size="icon"

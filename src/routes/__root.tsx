@@ -6,12 +6,14 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Footer, Header } from "@/components/site-shell";
+import { pageContentQueryOptions, PageContentContext } from "@/lib/site-data";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -75,16 +77,19 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  loader: async ({context,location}) => {
+    if(location.pathname === "/admin") return {} as Record<string,string>;
+    try{return await context.queryClient.ensureQueryData(pageContentQueryOptions);}catch{return {} as Record<string,string>;}
+  },
+  head: ({loaderData}) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#14110F" },
-      { title: "Wedding Caterers in Ajmer | N Sattu Cuisine" },
+      { title: loaderData?.["site_title"] || "Wedding Caterers in Ajmer | N Sattu Cuisine" },
       {
         name: "description",
-        content:
-          "Premier wedding catering and authentic halwai services in Ajmer, Pushkar & Kishangarh by N Sattu Cuisine.",
+        content: loaderData?.["site_description"] || "Premier wedding catering and authentic halwai services in Ajmer, Pushkar & Kishangarh by N Sattu Cuisine.",
       },
       { name: "author", content: "N Sattu Cuisine" },
       { property: "og:site_name", content: "N Sattu Cuisine" },
@@ -128,21 +133,25 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const initialContent = Route.useLoaderData();
+  const isAdminPage = useRouterState({select: state=>state.location.pathname === "/admin"});
 
   return (
     <QueryClientProvider client={queryClient}>
+      <PageContentContext.Provider value={isAdminPage ? undefined : initialContent}>
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-background focus:p-4"
       >
         Skip to content
       </a>
-      <Header />
+      {!isAdminPage && <Header />}
       <main id="main-content" tabIndex={-1}>
         <Outlet />
       </main>
-      <Footer />
+      {!isAdminPage && <Footer />}
       <Toaster richColors position="top-center" />
+      </PageContentContext.Provider>
     </QueryClientProvider>
   );
 }

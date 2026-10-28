@@ -10,7 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { BUSINESS_CONFIG as business } from "@/lib/site-config";
+import { useSiteSettings } from "@/lib/site-settings";
 
 const navigation = [
   { label: "Home", to: "/" },
@@ -44,13 +44,14 @@ function Brand() {
 }
 
 export function Header() {
+  const business = useSiteSettings();
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-background/95 backdrop-blur-lg">
       <div className="hidden h-8 bg-primary text-primary-foreground md:block">
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-8 text-[11px]">
           <span className="flex items-center gap-2">
             <MapPin className="size-3" />
-            Ajmer · Pushkar · Kishangarh
+            {business.location}
           </span>
           <a
             href={`tel:${business.telephone.replace(/\s/g, "")}`}
@@ -172,34 +173,18 @@ export function Header() {
 }
 
 export function Footer() {
+  const business = useSiteSettings();
   return (
     <footer className="border-t border-border bg-secondary">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.1fr] lg:px-8">
         <div>
           <Brand />
           <p className="mt-5 max-w-xs text-sm leading-7 text-muted-foreground">
-            Rajasthani wedding dining, handcrafted mithai and live counters. Prepared with care,
-            served with warmth.
+            {business.footerCopy}
           </p>
           <div className="mt-4 flex gap-2">
-            <a
-              href={business.socialLinks.instagram}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              className="grid size-11 place-items-center text-primary"
-            >
-              <Instagram />
-            </a>
-            <a
-              href={business.socialLinks.youtube}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="YouTube"
-              className="grid size-11 place-items-center text-primary"
-            >
-              <Youtube />
-            </a>
+            {business.socialLinks.instagram && <a href={business.socialLinks.instagram} target="_blank" rel="noreferrer" aria-label="Instagram" className="grid size-11 place-items-center text-primary"><Instagram /></a>}
+            {business.socialLinks.youtube && <a href={business.socialLinks.youtube} target="_blank" rel="noreferrer" aria-label="YouTube" className="grid size-11 place-items-center text-primary"><Youtube /></a>}
           </div>
         </div>
         <div>
@@ -229,10 +214,8 @@ export function Footer() {
           </nav>
         </div>
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-primary">
-            Let’s plan together
-          </h2>
-          {[business.telephone, business.secondaryTelephone].map((phone) => (
+          <h2 className="text-xs font-bold uppercase tracking-widest text-primary">{business.footerHeading}</h2>
+          {[business.telephone, business.secondaryTelephone].filter(Boolean).map((phone) => (
             <a
               key={phone}
               href={`tel:${phone.replace(/\s/g, "")}`}
@@ -242,10 +225,9 @@ export function Footer() {
             </a>
           ))}
           <p className="mt-3 text-sm leading-7 text-muted-foreground">
-            Ajmer, Rajasthan
-            <br />
-            Consultations by appointment
+            {business.location}
           </p>
+          {business.email && <a className="mt-3 block break-all text-sm text-primary underline" href={`mailto:${business.email}`}>{business.email}</a>}
           <Button variant="regalOutline" className="mt-5" asChild>
             <Link to="/book">
               Discuss your event <ArrowRight />

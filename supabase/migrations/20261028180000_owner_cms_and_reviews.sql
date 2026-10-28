@@ -13,7 +13,7 @@ create or replace function public.protect_content_categories() returns trigger
 language plpgsql security invoker set search_path = '' as $$
 declare dependent_kind text;
 begin
-  if old.kind not in ('menu_category','setup_category') then return old; end if;
+  if old.kind not in ('menu_category','setup_category') then if tg_op='DELETE' then return old; else return new; end if; end if;
   dependent_kind := case old.kind when 'menu_category' then 'dish' else 'setup' end;
   if tg_op = 'DELETE' then
     if exists(select 1 from public.site_items where kind=dependent_kind and data->>'category'=old.data->>'name') then
@@ -112,7 +112,7 @@ begin
   if char_length(clean_name) not between 2 and 80 or _rating is null or _rating not between 1 and 5 or char_length(clean_body) not between 20 and 2000 or char_length(clean_title)>100 then raise exception 'Please check your review details.'; end if;
   if coalesce(_event_type,'') not in ('','Royal Wedding','Sangeet / Mehendi','Reception','Corporate Gala','Private Feast') then raise exception 'Invalid event type.'; end if;
   if coalesce(_event_month,'')<>'' then
-    if _event_month !~ '^\d{4}-(0[1-9]|1[0-2])$' or _event_month>to_char(current_date,'YYYY-MM') then raise exception 'Invalid event month.'; end if;
+    if _event_month !~ '^\d{4}-(0[1-9]|1[0-2])$' or _event_month>to_char(now() at time zone 'Asia/Kolkata','YYYY-MM') then raise exception 'Invalid event month.'; end if;
   end if;
   select * into challenge from public.review_submission_challenges where token=_token for update;
   if not found then raise exception 'Please reopen the review form and try again.'; end if;
@@ -172,3 +172,9 @@ grant execute on function public.moderate_customer_review(uuid,text,text,text,te
 
 -- Retain private storage and existing policies. Match the upload form's limits.
 update storage.buckets set file_size_limit=26214400,allowed_mime_types=array['image/jpeg','image/png','image/webp','image/avif','video/mp4','video/webm'] where id='site-media';
+
+-- End the legacy automatic first-signup bootstrap. Existing administrators stay
+-- unchanged; new accounts do not gain privileges just by registering.
+drop trigger if exists on_auth_user_created_admin on auth.users;
+create index review_submission_challenges_date on public.review_submission_challenges(created_at);
+create index customer_reviews_date on public.customer_reviews(created_at);

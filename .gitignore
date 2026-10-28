@@ -16,6 +16,18 @@ dist-ssr
 .nitro
 *.local
 
+# Local caches and verification output
+.cache/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Local agent configuration and credentials
+/.agents/
+/.codex/
+/.aws/
+
 # Environment variables and credentials
 .env
 .env.*
@@ -39,6 +51,11 @@ secrets.json
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+.dev.vars.*
+
+# Supabase CLI local state
+/supabase/.temp/
+/supabase/.branches/
 
 # Editor directories and files
 .vscode/*
