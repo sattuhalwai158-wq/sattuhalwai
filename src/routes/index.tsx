@@ -322,17 +322,17 @@ function Index() {
 
       <section className="border-b border-border bg-background px-6 py-24 lg:py-32">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="relative aspect-[4/5] overflow-hidden border border-gold/30 bg-secondary p-3">
+          <div className="overflow-hidden rounded-lg border border-border bg-card p-3">
             <video
               src="/media/home/our-story.mp4"
-              poster="/media/home/catering-hospitality.webp"
+              poster="/media/home/our-story-brass-display-poster.webp"
               controls
               playsInline
               preload="none"
               aria-label="N-Sattu Cuisine catering and hospitality video"
-              className="size-full object-cover"
+              className="mx-auto aspect-[9/16] max-h-[640px] w-full rounded-md bg-secondary object-contain"
             />
-            <div className="pointer-events-none absolute inset-x-8 top-8 border-l-2 border-gold bg-background/95 p-5 shadow-soft">
+            <div className="mt-3 border-l-2 border-gold bg-background p-4">
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
                 Authentic & Heritage • प्रामाणिक परंपरा
               </p>
