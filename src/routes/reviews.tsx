@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { PublishedReviews, ReviewForm } from "@/components/customer-reviews";
 import { MessageCircle, ArrowRight } from "lucide-react";
 import {
@@ -26,6 +27,19 @@ export const Route = createFileRoute("/reviews")({
   component: Reviews,
 });
 function Reviews() {
+  const hash = useRouterState({ select: (state) => state.location.hash });
+  const [formOpen, setFormOpen] = useState(false);
+  useEffect(() => {
+    if (hash === "share-review") setFormOpen(true);
+  }, [hash]);
+  useEffect(() => {
+    if (!formOpen) return;
+    const frame = requestAnimationFrame(() => {
+      document.getElementById("share-review")?.scrollIntoView({ block: "start" });
+      document.getElementById("review-name")?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [formOpen]);
   const faqs = useItems("faq").filter((item) => item.q && item.a);
   const query = useAllItems();
   return (
@@ -40,8 +54,16 @@ function Reviews() {
           <Breadcrumbs items={[{ label: "Reviews & FAQ" }]} />
         </div>
       </div>
-      <PublishedReviews />
-      <ReviewForm />
+      <PublishedReviews formOpen={formOpen} onShare={() => setFormOpen(true)} />
+      <div id="review-form-panel" hidden={!formOpen}>
+        <div className="mx-auto flex max-w-7xl justify-end px-5 pt-4 lg:px-8">
+          <Button variant="outline" onClick={() => {
+            setFormOpen(false);
+            document.getElementById("share-review-trigger")?.focus();
+          }}>Hide form</Button>
+        </div>
+        <ReviewForm />
+      </div>
       <section className="border-t border-border bg-secondary/40 px-5 py-14 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.7fr_1.3fr]">
           <div>

@@ -12,13 +12,13 @@ import { createReviewSubmitter, emptyReview, reviewEvents, validateReview, type 
 export function ReviewStars({rating}:{rating:number}) {
  return <span className="inline-flex items-center gap-1 text-gold" aria-label={`${rating} out of 5 stars`}>{[1,2,3,4,5].map(star=><Star key={star} aria-hidden="true" className={`size-4 ${star<=rating?'fill-current':''}`} />)}</span>;
 }
-export function PublishedReviews({featured=false}:{featured?:boolean}) {
+export function PublishedReviews({featured=false,onShare,formOpen=false}:{featured?:boolean;onShare?:()=>void;formOpen?:boolean}) {
  const query=usePublishedReviews();const [page,setPage]=useState(0);
  const reviews=(query.data??[]).filter(review=>!featured||review.featured);
  if(featured && !reviews.length)return null;
  const shown=featured?reviews.slice(0,3):reviews.slice(page*6,page*6+6);
  return <section className="px-5 py-14 lg:px-8"><div className="mx-auto max-w-7xl">
-  <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="text-xs font-semibold uppercase tracking-widest text-primary">Shared by our customers</p><h2 className="mt-3 font-display text-4xl">Experiences around the table.</h2></div><Button variant="regalOutline" asChild><Link to="/reviews" hash="share-review">Share your experience</Link></Button></div>
+  <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="text-xs font-semibold uppercase tracking-widest text-primary">Shared by our customers</p><h2 className="mt-3 font-display text-4xl">Experiences around the table.</h2></div>{onShare ? <Button id="share-review-trigger" variant="regalOutline" onClick={onShare} aria-expanded={formOpen} aria-controls="review-form-panel">Share your experience</Button> : <Button variant="regalOutline" asChild><Link to="/reviews" hash="share-review">Share your experience</Link></Button>}</div>
   {query.isPending && <p role="status" className="mt-8 text-sm text-muted-foreground">Loading customer experiences…</p>}
   {query.isError && <div role="alert" className="mt-8 rounded-md border border-border p-5"><p className="text-sm">Customer experiences are temporarily unavailable.</p><Button variant="outline" className="mt-3" onClick={()=>{void query.refetch();}}>Try again</Button></div>}
   {!query.isPending&&!query.isError&&!reviews.length && <p className="mt-8 rounded-lg border border-dashed border-border bg-secondary/40 p-7 leading-8 text-muted-foreground">Be among the first to share your experience. Customer reviews appear here after permission and moderation.</p>}
