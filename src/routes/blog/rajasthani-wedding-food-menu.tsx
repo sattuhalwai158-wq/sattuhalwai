@@ -13,7 +13,7 @@ export const Route = createFileRoute("/blog/rajasthani-wedding-food-menu")({
       description:
         "Comprehensive guide to crafting an authentic royal Rajasthani wedding menu: Dal Baati Churma varieties, desert Ker Sangri, Gatte, and pure desi ghee sweets.",
       path: "/blog/rajasthani-wedding-food-menu",
-      ogImage: "/media/rajasthani-stall.jpg",
+      ogImage: "/media/setups/rajasthani-food-stall.jpg",
       ogType: "article",
       structuredData: [
         {
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/blog/rajasthani-wedding-food-menu")({
             "The Ultimate Rajasthani Wedding Food Menu Guide: From Dal Baati to Royal Mithai",
           description:
             "Discover how to compose an authentic Rajasthani wedding menu: Dal Baati Churma varieties, desert Ker Sangri, live jalebi counters, and pure desi ghee sweets.",
-          image: absoluteUrl("/media/rajasthani-stall.jpg"),
+          image: absoluteUrl("/media/setups/rajasthani-food-stall.jpg"),
           author: {
             "@type": "Person",
             name: "Chanchal Prajapati",
@@ -89,7 +89,7 @@ function RajasthaniWeddingFoodMenuGuide() {
 
           <div className="mt-8 overflow-hidden rounded-sm border border-border">
             <img
-              src="/media/rajasthani-stall.jpg"
+              src="/media/setups/rajasthani-food-stall.jpg"
               alt="Authentic Rajasthani wedding food menu and thaal"
               width={1200}
               height={675}

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/menus")({
       description:
         "Explore royal wedding catering menus in Ajmer: pure desi ghee mithai, traditional Marwari thaal, live counters, and multi-cuisine banquets. Jain menus available.",
       path: "/menus",
-      ogImage: "/media/sweet-rose-platter.jpg",
+      ogImage: "/media/menus/mithai/rose-mithai-platter.jpg",
       structuredData: [buildBreadcrumbSchema([{ name: "Catering Menus", path: "/menus" }])],
     }),
   component: Menus,

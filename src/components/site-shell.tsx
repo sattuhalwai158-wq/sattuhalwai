@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, MapPin, Menu, Phone, Youtube, ArrowRight } from "lucide-react";
-const logo = "/media/brand-logo.webp";
+const logo = "/media/brand/n-sattu-cuisine-logo.webp";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,

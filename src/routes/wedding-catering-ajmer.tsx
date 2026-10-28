@@ -64,7 +64,7 @@ export const Route = createFileRoute("/wedding-catering-ajmer")({
       description:
         "Looking for wedding caterers in Ajmer? N Sattu Cuisine provides authentic Rajasthani banquets, pure desi ghee halwai sweets & palace buffet setups for weddings and family celebrations.",
       path: "/wedding-catering-ajmer",
-      ogImage: "/media/buffet-6.jpg",
+      ogImage: "/media/setups/illuminated-buffet-counters.jpg",
       structuredData: [
         buildLocalBusinessSchema(),
         buildServiceSchema({
@@ -173,7 +173,7 @@ function WeddingCateringAjmer() {
 
           <div className="relative overflow-hidden rounded-sm border border-gold/30 bg-card p-3 shadow-lift">
             <img
-              src="/media/buffet-6.jpg"
+              src="/media/setups/illuminated-buffet-counters.jpg"
               alt="Luxury wedding catering buffet setup in Ajmer by N Sattu Cuisine"
               width={800}
               height={600}
@@ -281,7 +281,7 @@ function WeddingCateringAjmer() {
             <div className="group overflow-hidden border border-border bg-card">
               <div className="aspect-[4/3] overflow-hidden">
                 <img
-                  src="/media/sweet-rose-platter.jpg"
+                  src="/media/menus/mithai/rose-mithai-platter.jpg"
                   alt="Artisanal Rose Kesar Dry Fruit Sweets by Sattu Halwai Ajmer"
                   width={600}
                   height={450}
@@ -304,7 +304,7 @@ function WeddingCateringAjmer() {
             <div className="group overflow-hidden border border-border bg-card">
               <div className="aspect-[4/3] overflow-hidden">
                 <img
-                  src="/media/rajasthani-stall.jpg"
+                  src="/media/setups/rajasthani-food-stall.jpg"
                   alt="Traditional Royal Rajasthani Thali served at Ajmer wedding"
                   width={600}
                   height={450}
@@ -327,7 +327,7 @@ function WeddingCateringAjmer() {
             <div className="group overflow-hidden border border-border bg-card">
               <div className="aspect-[4/3] overflow-hidden">
                 <img
-                  src="/media/live-dosa-counter.jpg"
+                  src="/media/setups/live-dosa-counter.jpg"
                   alt="Theatrical Live Food Stall at wedding reception in Ajmer"
                   width={600}
                   height={450}
@@ -443,12 +443,12 @@ function WeddingCateringAjmer() {
       </section>
 
       {/* Call to Action Bar */}
-      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-border bg-secondary text-primary px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">
             Begin Planning Your Ajmer Celebration
           </h2>
-          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-muted-foreground max-w-2xl mx-auto leading-7">
             Secure your dates with Satyanarayan Prajapati and our dedicated culinary team. We invite
             you to an exclusive tasting session at our kitchen.
           </p>
@@ -461,7 +461,7 @@ function WeddingCateringAjmer() {
             <Button
               variant="ghost"
               size="lg"
-              className="border border-gold/50 text-gold hover:bg-gold hover:text-foreground"
+              className="border border-primary/40 bg-background text-primary hover:bg-primary hover:text-primary-foreground"
               asChild
             >
               <a href={`tel:${BUSINESS_CONFIG.telephone}`}>

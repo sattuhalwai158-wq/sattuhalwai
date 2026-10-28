@@ -1,7 +1,7 @@
-const delicacies = "/media/home-mithai.webp";
-const liveCounter = "/media/live-dosa-counter.jpg";
-const masterHalwai = "/media/buffet-17.jpg";
-const banquet = "/media/buffet-6.jpg";
+const delicacies = "/media/menus/mithai/signature-mithai-platter.webp";
+const liveCounter = "/media/setups/live-dosa-counter.jpg";
+const masterHalwai = "/media/about/catering-team-and-service.jpg";
+const banquet = "/media/setups/illuminated-buffet-counters.jpg";
 
 export const navItems = [
   { label: "Home", hi: "होम", to: "/" },
@@ -22,7 +22,7 @@ export const dishes = [
     description:
       "Rose-coated dry-fruit mithai with a bright kesar centre, arranged around a handcrafted sugar rose.",
     tags: ["Pure Desi Ghee", "Chef Signature"],
-    image: "/media/home-slices.webp",
+    image: "/media/menus/mithai/rose-kesar-slices.webp",
     position: "50% 50%",
     pairing: "Masala chai, kahwa or rose milk.",
   },
@@ -33,7 +33,7 @@ export const dishes = [
     description:
       "Golden mawa cups crowned with rose-flavoured mithai and finished for wedding service.",
     tags: ["Pure Desi Ghee", "Chef Signature"],
-    image: "/media/home-cups.webp",
+    image: "/media/menus/mithai/rose-mawa-cups.webp",
     position: "50% 50%",
     pairing: "Kesar milk or masala chai.",
   },
@@ -44,7 +44,7 @@ export const dishes = [
     description:
       "A wedding breakfast plate with sandwiches, savoury bites, chaat and fresh accompaniments.",
     tags: ["Wedding Breakfast", "Jain Available"],
-    image: "/media/shadi-breakfast.jpg",
+    image: "/media/celebrations/wedding-breakfast-platter.jpg",
     position: "50% 50%",
     pairing: "Tea, coffee or fresh juice.",
   },
@@ -55,7 +55,7 @@ export const dishes = [
     description:
       "A festive breakfast plate with savoury pancakes, dhokla, jalebi and colourful garnishes.",
     tags: ["Breakfast Service", "Jain Available"],
-    image: "/media/haldi-breakfast.jpg",
+    image: "/media/celebrations/haldi-breakfast-platter.jpg",
     position: "50% 50%",
     pairing: "Masala chai or fresh juice.",
   },
@@ -65,7 +65,7 @@ export const dishes = [
     category: "Royal Rajasthani Thaal",
     description: "A generous lunch thali with roti, rice, curries and traditional accompaniments.",
     tags: ["Wedding Lunch", "Heritage Service"],
-    image: "/media/mehendi-lunch.jpg",
+    image: "/media/celebrations/mehendi-lunch-platter.jpg",
     position: "50% 50%",
     pairing: "Chaas, salad and seasonal pickle.",
   },
@@ -76,7 +76,7 @@ export const dishes = [
     description:
       "A complete celebration thali with rice, dal, kadhi, vegetables, breads and sweets.",
     tags: ["Wedding Dinner", "Jain Available"],
-    image: "/media/haldi-dinner.jpg",
+    image: "/media/celebrations/haldi-dinner-platter.jpg",
     position: "50% 50%",
     pairing: "Chaas and fresh salad.",
   },
@@ -86,7 +86,7 @@ export const dishes = [
     category: "Live Theatrical Counters",
     description: "Fresh moong chillas cooked and garnished live for guests at the celebration.",
     tags: ["Live Counter", "Made to Order"],
-    image: "/media/live-dosa-counter.jpg",
+    image: "/media/setups/live-dosa-counter.jpg",
     position: "50% 50%",
     pairing: "Green chutney and house masala.",
   },
@@ -96,7 +96,7 @@ export const dishes = [
     category: "Live Theatrical Counters",
     description: "Hot masala Maggi tossed with vegetables and served fresh at the live counter.",
     tags: ["Live Counter", "Jain Available"],
-    image: "/media/high-tea.jpg",
+    image: "/media/celebrations/high-tea-platter.jpg",
     position: "50% 50%",
     pairing: "Tea, coffee or chilled refreshments.",
   },
@@ -106,42 +106,42 @@ export const setups = [
   {
     title: "Illuminated Buffet Counters",
     category: "LED Buffet Staging",
-    image: "/media/buffet-6.jpg",
+    image: "/media/setups/illuminated-buffet-counters.jpg",
     position: "50% 50%",
     detail: "Ajmer • Winter wedding",
   },
   {
     title: "Live Dosa Counter",
     category: "Live Counters & Theatrics",
-    image: "/media/live-dosa-counter.jpg",
+    image: "/media/setups/live-dosa-counter.jpg",
     position: "50% 50%",
     detail: "Pushkar • Sangeet supper",
   },
   {
     title: "Brass & Kulhad Service",
     category: "Royal Serveware",
-    image: "/media/buffet-28.jpg",
+    image: "/media/setups/brass-and-kulhad-service.jpg",
     position: "50% 50%",
     detail: "Pushkar • Palace reception",
   },
   {
     title: "Royal Wedding Thali",
     category: "Royal Serveware",
-    image: "/media/rajasthani-stall.jpg",
+    image: "/media/setups/rajasthani-food-stall.jpg",
     position: "50% 50%",
     detail: "Ajmer • Tasting atelier • Private event",
   },
   {
     title: "Night Food Street",
     category: "LED Buffet Staging",
-    image: "/media/night-stalls.jpg",
+    image: "/media/setups/night-food-stalls.jpg",
     position: "50% 50%",
     detail: "Kishangarh • Wedding brunch",
   },
   {
     title: "Rose Mithai Platter",
     category: "Royal Serveware",
-    image: "/media/rose-sweet-cups.jpg",
+    image: "/media/menus/mithai/rose-mithai-cups.jpg",
     position: "50% 50%",
     detail: "Ajmer • Engagement evening",
   },

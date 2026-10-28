@@ -73,29 +73,29 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.985 0.008 85);
+  --background: oklch(0.985 0.006 85);
   --foreground: oklch(0.22 0.015 60);
-  --card: oklch(1 0 0);
+  --card: oklch(0.99 0.009 85);
   --card-foreground: oklch(0.22 0.015 60);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.015 60);
   --primary: oklch(0.34 0.105 15);
   --primary-foreground: oklch(0.985 0.008 85);
-  --secondary: oklch(0.955 0.02 80);
+  --secondary: oklch(0.965 0.009 85);
   --secondary-foreground: oklch(0.34 0.105 15);
   --muted: oklch(0.965 0.012 82);
   --muted-foreground: oklch(0.46 0.02 60);
-  --accent: oklch(0.76 0.13 83);
-  --accent-foreground: oklch(0.26 0.04 75);
+  --accent: oklch(0.95 0.014 15);
+  --accent-foreground: oklch(0.34 0.105 15);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.86 0.04 82);
+  --border: oklch(0.83 0.055 80);
   --input: oklch(0.85 0.03 82);
   --ring: oklch(0.4 0.11 15);
   --blush: oklch(0.99 0.004 85);
   --berry: oklch(0.4 0.11 15);
-  --gold: oklch(0.51 0.075 78);
-  --hero-ink: oklch(0.2 0.035 15);
+  --gold: oklch(0.5 0.09 80);
+  --hero-ink: oklch(0.19 0.012 65);
   --hero-foreground: oklch(0.985 0.008 85);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -125,8 +125,8 @@
   --secondary-foreground: oklch(0.34 0.105 15);
   --muted: oklch(0.965 0.012 82);
   --muted-foreground: oklch(0.46 0.02 60);
-  --accent: oklch(0.76 0.13 83);
-  --accent-foreground: oklch(0.26 0.04 75);
+  --accent: oklch(0.95 0.014 15);
+  --accent-foreground: oklch(0.34 0.105 15);
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.86 0.04 82);
@@ -229,6 +229,239 @@ body {
   background:
     radial-gradient(ellipse at top left, oklch(0.94 0.035 80 / 65%), transparent 65%),
     var(--background);
+}
+
+/* Homepage: one brand palette, with food photography as the main accent. */
+.home-page {
+  background: var(--background);
+  color: var(--foreground);
+}
+.home-page > section {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+}
+.home-page > section h2,
+.home-page > section h3 {
+  color: var(--primary);
+}
+.home-page .bg-secondary,
+.home-page .bg-muted {
+  background-color: var(--secondary);
+}
+.home-page > section.bg-secondary,
+.home-page > section.bg-muted {
+  background-color: var(--background);
+}
+.home-page a.group > .bg-gradient-to-t,
+.home-page a.group > .bg-obsidian\/45 {
+  display: none;
+}
+.home-page a.group > .text-hero-foreground {
+  background: var(--background);
+  color: var(--primary);
+  border-top: 1px solid var(--border);
+}
+.home-page a.group > .text-hero-foreground .text-gold,
+.home-page a.group > .text-hero-foreground .text-hero-foreground {
+  color: var(--gold);
+}
+.home-page .home-hero-frame > .text-hero-foreground {
+  background: var(--background);
+  color: var(--primary);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid var(--border);
+}
+.home-page .home-hero-frame > .text-hero-foreground p {
+  color: var(--primary);
+}
+.home-page h1,
+.home-page h2,
+.home-page h3 {
+  text-wrap: balance;
+}
+.home-page h1 {
+  color: var(--primary);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+.home-page .home-hero {
+  background: var(--secondary);
+  color: var(--foreground);
+  overflow: hidden;
+}
+.home-page .home-hero h1 {
+  color: var(--primary);
+}
+.home-page .home-hero .text-muted-foreground {
+  color: var(--muted-foreground);
+}
+.home-page .home-hero .text-berry,
+.home-page .home-hero .text-primary {
+  color: var(--primary);
+}
+.home-page .home-hero .border-border {
+  border-color: var(--border);
+}
+.home-page .home-hero a.bg-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+.home-page .home-hero a.bg-background {
+  background: var(--background);
+  border-color: var(--gold);
+  color: var(--primary);
+}
+.home-page .home-hero a:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.home-page .home-hero::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid var(--border);
+  pointer-events: none;
+}
+.home-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.home-location::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: var(--gold);
+}
+.home-hero-frame {
+  border-radius: 8px;
+  outline: 1px solid var(--gold);
+  outline-offset: 9px;
+  margin: 10px;
+  box-shadow: 0 24px 60px oklch(0.34 0.105 15 / 15%);
+}
+.home-photo-seal {
+  position: absolute;
+  top: 32px;
+  right: -4px;
+  display: grid;
+  align-content: center;
+  width: 88px;
+  height: 88px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  background: var(--background);
+  color: var(--gold);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 19px;
+  box-shadow: 0 0 0 5px var(--secondary);
+}
+.home-highlights a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+}
+.home-highlights a > span {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  background: var(--secondary);
+  outline: 1px solid var(--border);
+  outline-offset: 5px;
+  transition: background 180ms, color 180ms;
+}
+.home-highlights a:hover > span {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.home-social-grid a {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--hero-ink);
+}
+.home-social-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.home-social-grid a > span {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  background: var(--background);
+  color: var(--primary);
+  font-family: var(--font-display);
+  font-size: 24px;
+}
+.home-photo-seal span {
+  margin-top: 3px;
+  font-family: var(--font-sans);
+  font-size: 8px;
+  letter-spacing: .22em;
+}
+.home-page .bg-card {
+  background: var(--background);
+}
+.home-page a.group {
+  border-radius: 8px;
+}
+.home-page .home-enquiry {
+  background: var(--secondary);
+}
+.home-enquiry > img {
+  display: none;
+}
+.home-enquiry .text-gold {
+  color: var(--gold);
+}
+.home-enquiry h2 {
+  color: var(--primary);
+}
+.home-enquiry p.text-hero-foreground\/75 {
+  color: var(--muted-foreground);
+}
+.home-page button,
+.home-page a {
+  transition-duration: 180ms;
+}
+@media (min-width: 1024px) {
+  .home-page > section:not(.home-hero) {
+    padding-top: 88px;
+    padding-bottom: 88px;
+  }
+}
+@media (max-width: 639px) {
+  .home-page .home-hero::before {
+    inset: 9px;
+  }
+  .home-page .home-hero h1 {
+    font-size: clamp(3rem, 13vw, 4.25rem);
+  }
+  .home-photo-seal {
+    top: 26px;
+    right: 0;
+    width: 70px;
+    height: 70px;
+    font-size: 16px;
+  }
+  .home-page > section:not(.home-hero) {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
 }
 :focus-visible {
   outline: 2px solid var(--berry);

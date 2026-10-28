@@ -36,7 +36,7 @@ export const Route = createFileRoute("/about")({
       description:
         "Meet founder Nathu Ji Prajapati, MD Satyanarayan Prajapati & CEO Chanchal Prajapati. Discover the family, food and approach to wedding catering behind N Sattu Cuisine in Ajmer.",
       path: "/about",
-      ogImage: "/media/buffet-17.jpg",
+      ogImage: "/media/about/catering-team-and-service.jpg",
       structuredData: [buildBreadcrumbSchema([{ name: "About Us", path: "/about" }])],
     }),
   component: About,

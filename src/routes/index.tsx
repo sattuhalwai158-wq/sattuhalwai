@@ -36,7 +36,7 @@ export const Route = createFileRoute("/")({
   head: ({loaderData})=>buildPageHead({
     title:loaderData?.content["site_title"] || "Wedding Caterers in Ajmer | N Sattu Cuisine",
     description:loaderData?.content["site_description"] || "Premier wedding caterers in Ajmer, Pushkar & Kishangarh by N Sattu Cuisine. Rajasthani banquets, mithai and live counters.",
-    path:"/",ogImage:loaderData?.content["site_og_image"] || "/media/buffet-6.jpg",structuredData:[buildLocalBusinessSchema()],
+    path:"/",ogImage:loaderData?.content["site_og_image"] || "/media/setups/illuminated-buffet-counters.jpg",structuredData:[buildLocalBusinessSchema()],
   }),
   component: Index,
 });
@@ -154,7 +154,7 @@ function Index() {
   const heroImages = heroMedia.filter((m) => m.media_type === "image");
   const slides = heroImages.length
     ? heroImages.map((m) => m.url)
-    : ["/media/home-thali.webp", "/media/home-live-counter.webp", "/media/home-hospitality.webp"];
+    : ["/media/home/rajasthani-thali.webp", "/media/home/live-food-counter.webp", "/media/home/catering-hospitality.webp"];
   const [slide, setSlide] = useState(0);
   const [paused, setPaused] = useState(true);
   // Live CMS content may replace the fallback slides with a shorter collection.
@@ -192,11 +192,11 @@ function Index() {
     (x, i) => [serviceIcons[i % 4] ?? Gem, x.title, x.hi, x.image, x.description] as const,
   );
   return (
-    <>
+    <div className="home-page">
       <section className="home-hero mt-20 md:mt-28" aria-label="Wedding catering in Rajasthan">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-20">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-berry">
+            <p className="home-location text-xs font-semibold uppercase tracking-[0.22em] text-berry">
               Ajmer · Pushkar · Kishangarh
             </p>
             <p className="mt-7 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
@@ -231,7 +231,7 @@ function Index() {
             </div>
           </div>
           <div className="relative min-w-0">
-            <div className="relative aspect-[4/5] max-h-[620px] overflow-hidden rounded-t-[10rem] rounded-b-2xl bg-secondary shadow-lift">
+            <div className="home-hero-frame relative aspect-[4/5] max-h-[620px] overflow-hidden bg-secondary shadow-lift">
               <img
                 key={slides[activeSlide]}
                 src={slides[activeSlide]}
@@ -250,8 +250,8 @@ function Index() {
                 decoding="async"
                 className="size-full object-cover"
                 onError={(event) => {
-                  if (!event.currentTarget.src.endsWith("/media/home-thali.webp"))
-                    event.currentTarget.src = "/media/home-thali.webp";
+                  if (!event.currentTarget.src.endsWith("/media/home/rajasthani-thali.webp"))
+                    event.currentTarget.src = "/media/home/rajasthani-thali.webp";
                 }}
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-hero-ink/90 to-transparent px-7 pb-7 pt-20 text-hero-foreground">
@@ -261,6 +261,7 @@ function Index() {
                 <p className="mt-2 font-display text-3xl">Made with care. Served with warmth.</p>
               </div>
             </div>
+            <span className="home-photo-seal" aria-hidden="true">N-SATTU<span>CUISINE</span></span>
             <div className="mt-4 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">A taste of N-Sattu Cuisine</span>
               <div className="flex items-center" role="group" aria-label="Featured photos">
@@ -311,17 +312,27 @@ function Index() {
         </div>
       </div>
 
+      <nav aria-label="Explore our celebrations" className="home-highlights mx-auto grid max-w-3xl grid-cols-3 gap-x-6 gap-y-8 px-6 py-12 sm:grid-cols-5 sm:py-16">
+        <Link to="/reviews"><span><Gem className="size-7" aria-hidden="true" /></span>Customer stories</Link>
+        <Link to="/setups"><span><Sparkles className="size-7" aria-hidden="true" /></span>Weddings</Link>
+        <Link to="/menus"><span><ChefHat className="size-7" aria-hidden="true" /></span>Our food</Link>
+        <Link to="/menus"><span><UtensilsCrossed className="size-7" aria-hidden="true" /></span>The menu</Link>
+        <Link to="/setups" hash="gallery"><span><MapPin className="size-7" aria-hidden="true" /></span>Events & setups</Link>
+      </nav>
+
       <section className="border-b border-border bg-background px-6 py-24 lg:py-32">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="relative aspect-[4/5] overflow-hidden border border-gold/30 bg-secondary p-3">
-            <img
-              src="/media/home-hospitality.webp"
-              loading="lazy"
-              decoding="async"
-              alt="N-Sattu Cuisine team preparing a royal celebration"
+            <video
+              src="/media/home/our-story.mp4"
+              poster="/media/home/catering-hospitality.webp"
+              controls
+              playsInline
+              preload="none"
+              aria-label="N-Sattu Cuisine catering and hospitality video"
               className="size-full object-cover"
             />
-            <div className="absolute inset-x-8 bottom-8 border-l-2 border-gold bg-background/95 p-5 shadow-soft">
+            <div className="pointer-events-none absolute inset-x-8 top-8 border-l-2 border-gold bg-background/95 p-5 shadow-soft">
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
                 Authentic & Heritage • प्रामाणिक परंपरा
               </p>
@@ -372,6 +383,20 @@ function Index() {
       </section>
 
       <PublishedReviews featured />
+      <section className="bg-secondary px-5 py-16 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
+            <div><p className="text-xs font-semibold uppercase tracking-[.2em] text-gold">A taste of our world</p><h2 className="mt-3 font-display text-4xl sm:text-5xl">Food. Festivities. Fine details.</h2></div>
+            <Button variant="regalOutline" asChild><a href="https://www.instagram.com/sattu__halwai/" target="_blank" rel="noreferrer">Explore our Instagram <ArrowRight /></a></Button>
+          </div>
+          <div className="home-social-grid grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+            <Link to="/menus"><img src={featured[0]?.image || "/media/menus/mithai/rose-mawa-cups.webp"} alt={featured[0]?.alt || "Small bites prepared for a celebration"} loading="lazy" /><span>Crafted to delight</span></Link>
+            <Link to="/menus"><img src={featured[1]?.image || "/media/menus/mithai/signature-mithai-platter.webp"} alt={featured[1]?.alt || "Handcrafted festive mithai"} loading="lazy" /><span>A little sweetness</span></Link>
+            <Link to="/setups"><img src={setups[0]?.image || "/media/setups/illuminated-buffet-counters.jpg"} alt={setups[0]?.title || "Wedding buffet presentation"} loading="lazy" /><span>Set for celebration</span></Link>
+            <Link to="/about"><img src="/media/home/catering-hospitality.webp" alt="The care behind our catering service" loading="lazy" /><span>Served with warmth</span></Link>
+          </div>
+        </div>
+      </section>
       <section className="px-6 py-24 lg:py-32">
         <div className="mx-auto max-w-7xl">
           <SectionTitle
@@ -514,10 +539,10 @@ function Index() {
                     <video
                       src={video.url}
                       poster={
-                        video.url === "/media/video-1.mp4"
-                          ? "/media/video-1-poster.jpg"
-                          : video.url === "/media/video-2.mp4"
-                            ? "/media/video-2-poster.jpg"
+                        video.url === "/media/videos/illuminated-buffet-staging.mp4"
+                          ? "/media/videos/illuminated-buffet-staging-poster.jpg"
+                          : video.url === "/media/videos/live-stalls-and-breakfast.mp4"
+                            ? "/media/videos/live-stalls-and-breakfast-poster.jpg"
                             : undefined
                       }
                       muted
@@ -630,9 +655,9 @@ function Index() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-obsidian px-6 py-24">
+      <section className="home-enquiry relative overflow-hidden bg-secondary px-6 py-24">
         <img
-          src="/media/buffet-39.jpg"
+          src="/media/setups/wedding-buffet-backdrop.jpg"
           loading="lazy"
           alt=""
           className="absolute inset-0 size-full object-cover opacity-25"
@@ -724,6 +749,6 @@ function Index() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

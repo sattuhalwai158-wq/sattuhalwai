@@ -164,16 +164,16 @@ export const defaultItems: Record<string, ItemData[]> = {
     ],
   ].map(([q, a]) => ({ q, a })),
   service: [
-    ["Royal Wedding Banquets", "शादी का भोज", "/media/buffet-6.jpg"],
-    ["Artisanal Mithai", "खास मिठाइयाँ", "/media/sweet-rose-platter.jpg"],
-    ["Live Food Counters", "लाइव काउंटर", "/media/live-dosa-counter.jpg"],
-    ["Palace Buffet Setups", "शाही सजावट", "/media/buffet-28.jpg"],
+    ["Royal Wedding Banquets", "शादी का भोज", "/media/setups/illuminated-buffet-counters.jpg"],
+    ["Artisanal Mithai", "खास मिठाइयाँ", "/media/menus/mithai/rose-mithai-platter.jpg"],
+    ["Live Food Counters", "लाइव काउंटर", "/media/setups/live-dosa-counter.jpg"],
+    ["Palace Buffet Setups", "शाही सजावट", "/media/setups/brass-and-kulhad-service.jpg"],
   ].map(([title, hi, image]) => ({ title, hi, image })),
   stat: [],
   destination: [
-    ["Ajmer", "अजमेर", "/media/buffet-6.jpg"],
-    ["Pushkar", "पुष्कर", "/media/rajasthani-stall.jpg"],
-    ["Kishangarh", "किशनगढ़", "/media/night-stalls.jpg"],
+    ["Ajmer", "अजमेर", "/media/setups/illuminated-buffet-counters.jpg"],
+    ["Pushkar", "पुष्कर", "/media/setups/rajasthani-food-stall.jpg"],
+    ["Kishangarh", "किशनगढ़", "/media/setups/night-food-stalls.jpg"],
   ].map(([place, hi, image]) => ({ place, hi, image })),
 };
 

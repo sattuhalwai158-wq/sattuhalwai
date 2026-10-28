@@ -63,7 +63,7 @@ export const Route = createFileRoute("/wedding-catering-pushkar")({
       description:
         "Specialist destination wedding caterers in Pushkar, Rajasthan. 100% pure vegetarian royal feasts, artisanal sweets, live counters & palace setups for Pushkar resorts & camps.",
       path: "/wedding-catering-pushkar",
-      ogImage: "/media/buffet-28.jpg",
+      ogImage: "/media/setups/brass-and-kulhad-service.jpg",
       structuredData: [
         buildLocalBusinessSchema(),
         buildServiceSchema({
@@ -177,7 +177,7 @@ function WeddingCateringPushkar() {
 
           <div className="relative overflow-hidden rounded-sm border border-gold/30 bg-card p-3 shadow-lift">
             <img
-              src="/media/buffet-28.jpg"
+              src="/media/setups/brass-and-kulhad-service.jpg"
               alt="Royal brass and copper serveware for wedding catering in Pushkar"
               width={800}
               height={600}
@@ -333,10 +333,10 @@ function WeddingCateringPushkar() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-border bg-secondary text-primary px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">Enquire for Your Pushkar Wedding</h2>
-          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-muted-foreground max-w-2xl mx-auto leading-7">
             Connect with our wedding catering concierge today to review dates, menus, and logistics
             for your Pushkar celebration.
           </p>
@@ -349,7 +349,7 @@ function WeddingCateringPushkar() {
             <Button
               variant="ghost"
               size="lg"
-              className="border border-gold/50 text-gold hover:bg-gold hover:text-foreground"
+              className="border border-primary/40 bg-background text-primary hover:bg-primary hover:text-primary-foreground"
               asChild
             >
               <a href={`tel:${BUSINESS_CONFIG.telephone}`}>

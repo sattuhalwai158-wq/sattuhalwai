@@ -12,7 +12,7 @@ export const Route = createFileRoute("/blog/")({
       description:
         "Expert guides, menu planning tips, and culinary heritage articles for planning weddings and celebrations in Ajmer, Pushkar, and Kishangarh.",
       path: "/blog",
-      ogImage: "/media/buffet-6.jpg",
+      ogImage: "/media/setups/illuminated-buffet-counters.jpg",
       structuredData: [buildBreadcrumbSchema([{ name: "Blog", path: "/blog" }])],
     }),
   component: BlogIndex,

@@ -30,7 +30,7 @@ export const BUSINESS_CONFIG = {
   whatsapp: "919460426952",
   email: "", // Left blank as not publicly specified in codebase
   logo: "/nsattu-logo.png",
-  defaultOgImage: "/media/buffet-6.jpg",
+  defaultOgImage: "/media/setups/illuminated-buffet-counters.jpg",
   founders: [
     {
       name: "Nathu Ji Prajapati",

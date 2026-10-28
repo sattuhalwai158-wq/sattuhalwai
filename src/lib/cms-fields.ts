@@ -38,7 +38,7 @@ export const contentGroups:Record<string,{title:string;copy:string;fields:Conten
  settings:{title:'Website settings',copy:'Manage your public website identity. Account credentials and hosting settings are never shown here.',fields:[
   {key:'site_title',label:'Default website title',fallback:'N Sattu Cuisine · Wedding Catering in Ajmer'},
   {key:'site_description',label:'Default website description',fallback:BUSINESS_CONFIG.description,type:'long'},
-  {key:'site_og_image',label:'Default social sharing photo URL',fallback:'/media/buffet-6.jpg'},
+  {key:'site_og_image',label:'Default social sharing photo URL',fallback:'/media/setups/illuminated-buffet-counters.jpg'},
   {key:'footer_copy',label:'Footer description',fallback:'Rajasthani wedding dining, handcrafted mithai and live counters. Prepared with care, served with warmth.',type:'long'},
   {key:'footer_heading',label:'Footer contact heading',fallback:'Let’s plan together'},
  ]},

@@ -29,7 +29,7 @@ const { siteMediaQueryOptions, useMedia } = await import(asModule(compiled));
 function Hero({ snapshot }) {
   const slides = useMedia("hero", snapshot);
   return React.createElement("img", {
-    src: slides[0]?.url || "/media/home-mithai.webp",
+    src: slides[0]?.url || "/media/menus/mithai/signature-mithai-platter.webp",
     "data-slides": slides.length,
   });
 }

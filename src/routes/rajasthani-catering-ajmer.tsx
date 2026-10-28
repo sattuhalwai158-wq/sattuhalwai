@@ -64,7 +64,7 @@ export const Route = createFileRoute("/rajasthani-catering-ajmer")({
       description:
         "Experience genuine Rajasthani catering in Ajmer by N Sattu Cuisine. Authentic Dal Baati Churma, Ker Sangri, pure desi ghee sweets & royal thaal dining for weddings.",
       path: "/rajasthani-catering-ajmer",
-      ogImage: "/media/rajasthani-stall.jpg",
+      ogImage: "/media/setups/rajasthani-food-stall.jpg",
       structuredData: [
         buildLocalBusinessSchema(),
         buildServiceSchema({
@@ -178,7 +178,7 @@ function RajasthaniCateringAjmer() {
 
           <div className="relative overflow-hidden rounded-sm border border-gold/30 bg-card p-3 shadow-lift">
             <img
-              src="/media/rajasthani-stall.jpg"
+              src="/media/setups/rajasthani-food-stall.jpg"
               alt="Traditional Royal Rajasthani Thaal setup in Ajmer"
               width={800}
               height={600}
@@ -350,12 +350,12 @@ function RajasthaniCateringAjmer() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-border bg-secondary text-primary px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">
             Taste Authentic Rajasthan at Your Wedding
           </h2>
-          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-muted-foreground max-w-2xl mx-auto leading-7">
             Connect directly with MD Satyanarayan Prajapati to design a regal Rajasthani menu
             tailored to your family's customs.
           </p>
@@ -368,7 +368,7 @@ function RajasthaniCateringAjmer() {
             <Button
               variant="ghost"
               size="lg"
-              className="border border-gold/50 text-gold hover:bg-gold hover:text-foreground"
+              className="border border-primary/40 bg-background text-primary hover:bg-primary hover:text-primary-foreground"
               asChild
             >
               <a href={`tel:${BUSINESS_CONFIG.telephone}`}>

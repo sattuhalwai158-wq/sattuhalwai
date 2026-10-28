@@ -24,7 +24,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "Wedding Planning",
     excerpt:
       "From calculating guest portions to selecting live counters and booking kitchen tastings in Ajmer, here is everything hosts need to know before finalizing their wedding caterer.",
-    image: "/media/buffet-6.jpg",
+    image: "/media/setups/illuminated-buffet-counters.jpg",
   },
   {
     slug: "rajasthani-wedding-food-menu",
@@ -38,6 +38,6 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "Culinary Heritage",
     excerpt:
       "Explore the customary dishes, seasonal baatis, slow-roasted mawa sweets, and theatrical live food counters that define an unforgettable Marwari wedding feast.",
-    image: "/media/rajasthani-stall.jpg",
+    image: "/media/setups/rajasthani-food-stall.jpg",
   },
 ];

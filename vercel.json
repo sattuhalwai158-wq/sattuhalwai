@@ -1,0 +1,184 @@
+{
+  "redirects": [
+    {
+      "source": "/media/brand-logo.webp",
+      "destination": "/media/brand/n-sattu-cuisine-logo.webp",
+      "permanent": true
+    },
+    {
+      "source": "/media/home-cups.webp",
+      "destination": "/media/menus/mithai/rose-mawa-cups.webp",
+      "permanent": true
+    },
+    {
+      "source": "/media/home-slices.webp",
+      "destination": "/media/menus/mithai/rose-kesar-slices.webp",
+      "permanent": true
+    },
+    {
+      "source": "/media/home-mithai.webp",
+      "destination": "/media/menus/mithai/signature-mithai-platter.webp",
+      "permanent": true
+    },
+    {
+      "source": "/media/home-thali.webp",
+      "destination": "/media/home/rajasthani-thali.webp",
+      "permanent": true
+    },
+    {
+      "source": "/media/home-hospitality.webp",
+      "destination": "/media/home/catering-hospitality.webp",
+      "permanent": true
+    },
+    {
+      "source": "/media/home-live-counter.webp",
+      "destination": "/media/home/live-food-counter.webp",
+      "permanent": true
+    },
+    {
+      "source": "/media/buffet-6.jpg",
+      "destination": "/media/setups/illuminated-buffet-counters.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/buffet-17.jpg",
+      "destination": "/media/about/catering-team-and-service.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/buffet-28.jpg",
+      "destination": "/media/setups/brass-and-kulhad-service.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/buffet-39.jpg",
+      "destination": "/media/setups/wedding-buffet-backdrop.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/live-dosa-counter.jpg",
+      "destination": "/media/setups/live-dosa-counter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/night-stalls.jpg",
+      "destination": "/media/setups/night-food-stalls.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/rajasthani-stall.jpg",
+      "destination": "/media/setups/rajasthani-food-stall.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/video-1.mp4",
+      "destination": "/media/videos/illuminated-buffet-staging.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/media/video-1-poster.jpg",
+      "destination": "/media/videos/illuminated-buffet-staging-poster.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/video-2.mp4",
+      "destination": "/media/videos/live-stalls-and-breakfast.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/media/video-2-poster.jpg",
+      "destination": "/media/videos/live-stalls-and-breakfast-poster.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/carnival-lunch.jpg",
+      "destination": "/media/celebrations/carnival-lunch-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/haldi-breakfast.jpg",
+      "destination": "/media/celebrations/haldi-breakfast-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/haldi-dinner.jpg",
+      "destination": "/media/celebrations/haldi-dinner-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/high-tea.jpg",
+      "destination": "/media/celebrations/high-tea-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/mehendi-lunch.jpg",
+      "destination": "/media/celebrations/mehendi-lunch-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/myra-breakfast.jpg",
+      "destination": "/media/celebrations/myra-breakfast-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/sangeet-dinner.jpg",
+      "destination": "/media/celebrations/sangeet-dinner-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/shadi-breakfast.jpg",
+      "destination": "/media/celebrations/wedding-breakfast-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/vidai-breakfast.jpg",
+      "destination": "/media/celebrations/farewell-breakfast-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/rose-sweet-cups.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-cups.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/rose-sweet-cups-2.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-cups-2.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/rose-sweet-cups-3.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-cups-3.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/rose-sweet-cups-4.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-cups-4.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/rose-sweet-cups-5.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-cups-5.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/rose-sweet-slices.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-slices.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/sweet-rose-platter.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-platter.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/sweet-rose-platter-2.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-platter-2.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/media/sweet-rose-platter-3.jpg",
+      "destination": "/media/menus/mithai/rose-mithai-platter-3.jpg",
+      "permanent": true
+    }
+  ]
+}

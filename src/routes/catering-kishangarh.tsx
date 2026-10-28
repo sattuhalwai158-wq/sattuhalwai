@@ -63,7 +63,7 @@ export const Route = createFileRoute("/catering-kishangarh")({
       description:
         "Premium wedding & event caterers in Kishangarh, Rajasthan. Authentic Rajasthani food, pure desi ghee sweets & luxury buffet setups for weddings and family celebrations.",
       path: "/catering-kishangarh",
-      ogImage: "/media/night-stalls.jpg",
+      ogImage: "/media/setups/night-food-stalls.jpg",
       structuredData: [
         buildLocalBusinessSchema(),
         buildServiceSchema({
@@ -171,7 +171,7 @@ function CateringKishangarh() {
 
           <div className="relative overflow-hidden rounded-sm border border-gold/30 bg-card p-3 shadow-lift">
             <img
-              src="/media/night-stalls.jpg"
+              src="/media/setups/night-food-stalls.jpg"
               alt="Night food street live stalls at wedding in Kishangarh"
               width={800}
               height={600}
@@ -317,12 +317,12 @@ function CateringKishangarh() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-gold/30 bg-obsidian text-hero-foreground px-5 py-16 lg:px-8">
+      <section className="border-t border-border bg-secondary text-primary px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="font-display text-3xl sm:text-5xl">
             Book Catering for Your Kishangarh Celebration
           </h2>
-          <p className="mt-4 text-sm text-hero-foreground/80 max-w-2xl mx-auto leading-7">
+          <p className="mt-4 text-sm text-muted-foreground max-w-2xl mx-auto leading-7">
             Submit your guest count, preferred event date, and cuisine choices. Our catering
             director will contact you promptly.
           </p>
@@ -335,7 +335,7 @@ function CateringKishangarh() {
             <Button
               variant="ghost"
               size="lg"
-              className="border border-gold/50 text-gold hover:bg-gold hover:text-foreground"
+              className="border border-primary/40 bg-background text-primary hover:bg-primary hover:text-primary-foreground"
               asChild
             >
               <a href={`tel:${BUSINESS_CONFIG.telephone}`}>

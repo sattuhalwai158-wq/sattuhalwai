@@ -107,9 +107,9 @@ export function buildLocalBusinessSchema() {
     telephone: BUSINESS_CONFIG.telephone,
     priceRange: BUSINESS_CONFIG.priceRange,
     image: [
-      absoluteUrl("/media/buffet-6.jpg"),
-      absoluteUrl("/media/buffet-28.jpg"),
-      absoluteUrl("/media/sweet-rose-platter.jpg"),
+      absoluteUrl("/media/setups/illuminated-buffet-counters.jpg"),
+      absoluteUrl("/media/setups/brass-and-kulhad-service.jpg"),
+      absoluteUrl("/media/menus/mithai/rose-mithai-platter.jpg"),
     ],
     logo: absoluteUrl(BUSINESS_CONFIG.logo),
     address: {

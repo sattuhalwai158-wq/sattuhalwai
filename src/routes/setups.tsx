@@ -17,7 +17,7 @@ export const Route = createFileRoute("/setups")({
       description:
         "Palatial buffet staging, traditional brass & copper serveware, and theatrical live food counters for luxury weddings in Ajmer, Pushkar & Kishangarh.",
       path: "/setups",
-      ogImage: "/media/buffet-6.jpg",
+      ogImage: "/media/setups/illuminated-buffet-counters.jpg",
       structuredData: [buildBreadcrumbSchema([{ name: "Luxury Setups", path: "/setups" }])],
     }),
   component: Setups,
@@ -169,10 +169,10 @@ function Setups() {
                   <video
                     src={v.url}
                     poster={
-                      v.url === "/media/video-1.mp4"
-                        ? "/media/video-1-poster.jpg"
-                        : v.url === "/media/video-2.mp4"
-                          ? "/media/video-2-poster.jpg"
+                      v.url === "/media/videos/illuminated-buffet-staging.mp4"
+                        ? "/media/videos/illuminated-buffet-staging-poster.jpg"
+                        : v.url === "/media/videos/live-stalls-and-breakfast.mp4"
+                          ? "/media/videos/live-stalls-and-breakfast-poster.jpg"
                           : undefined
                     }
                     muted

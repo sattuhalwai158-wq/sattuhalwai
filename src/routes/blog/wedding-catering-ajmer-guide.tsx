@@ -22,7 +22,7 @@ export const Route = createFileRoute("/blog/wedding-catering-ajmer-guide")({
       description:
         "Practical checklist and guide for planning wedding catering in Ajmer: seasonal menus, guest estimations, tasting protocols, venue setups & live counters.",
       path: "/blog/wedding-catering-ajmer-guide",
-      ogImage: "/media/buffet-6.jpg",
+      ogImage: "/media/setups/illuminated-buffet-counters.jpg",
       ogType: "article",
       structuredData: [
         {
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/blog/wedding-catering-ajmer-guide")({
           headline: "How to Plan Wedding Catering in Ajmer: The Complete Host's Guide",
           description:
             "Practical guide to planning wedding catering in Ajmer: budgeting, choosing venues, selecting traditional Rajasthani menus, and arranging tastings.",
-          image: absoluteUrl("/media/buffet-6.jpg"),
+          image: absoluteUrl("/media/setups/illuminated-buffet-counters.jpg"),
           author: {
             "@type": "Person",
             name: "Satyanarayan Prajapati",
@@ -94,7 +94,7 @@ function WeddingCateringAjmerGuide() {
 
           <div className="mt-8 overflow-hidden rounded-sm border border-border">
             <img
-              src="/media/buffet-6.jpg"
+              src="/media/setups/illuminated-buffet-counters.jpg"
               alt="Luxury wedding catering setup in Ajmer"
               width={1200}
               height={675}
