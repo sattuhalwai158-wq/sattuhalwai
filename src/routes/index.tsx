@@ -20,6 +20,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PublishedReviews } from "@/components/customer-reviews";
+import { VideoPreview } from "@/components/video-preview";
 import { Button } from "@/components/ui/button";
 import { useItems } from "@/lib/site-items";
 import { buildPageHead, buildLocalBusinessSchema } from "@/components/seo";
@@ -94,17 +95,16 @@ function ImageCard({
   return (
     <Link
       to={to}
-      className={`group relative block overflow-hidden rounded-sm bg-obsidian ${tall ? "aspect-[3/4]" : "aspect-[4/5]"}`}
+      className="group block overflow-hidden rounded-lg border border-border bg-card"
     >
       <img
         src={image}
         alt={title}
         loading="lazy"
-        className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
+        className={`w-full object-cover ${tall ? "aspect-[3/4]" : "aspect-[4/5]"}`}
         style={{ objectPosition: position }}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-obsidian/70 via-obsidian/10 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 p-6 text-hero-foreground">
+      <div className="border-t border-border p-5 text-primary">
         {label && (
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">{label}</p>
         )}
@@ -322,15 +322,11 @@ function Index() {
 
       <section className="border-b border-border bg-background px-6 py-24 lg:py-32">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="overflow-hidden rounded-lg border border-border bg-card p-3">
-            <video
+          <div className="mx-auto w-full max-w-[384px] overflow-hidden rounded-lg border border-border bg-card p-3">
+            <VideoPreview
               src="/media/home/our-story.mp4"
               poster="/media/home/our-story-brass-display-poster.webp"
-              controls
-              playsInline
-              preload="none"
-              aria-label="N-Sattu Cuisine catering and hospitality video"
-              className="mx-auto aspect-[9/16] max-h-[640px] w-full rounded-md bg-secondary object-contain"
+              title="N-Sattu Cuisine catering and hospitality"
             />
             <div className="mt-3 border-l-2 border-gold bg-background p-4">
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
@@ -404,7 +400,7 @@ function Index() {
             title={text("home_signature_title", "Crafted for the royal table.")}
             copy={text("home_signature_copy", "Discover our mithai, celebration plates and live-counter favourites. Discuss your preferences with our team.")}
           />
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className={`mx-auto mt-10 grid gap-6 ${featured.length < 3 ? "max-w-4xl sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3"}`}>
             {featured.map((f) => (
               <ImageCard
                 key={f.key}
@@ -481,21 +477,20 @@ function Index() {
             eyebrow="Gallery • सजावट और लाइव काउंटर"
             title={text("home_gallery_title", "Luxury setups & live theatrics.")}
           />
-          <div className="mt-14 grid auto-rows-[240px] gap-4 md:grid-cols-3">
-            {setups.slice(0, 6).map((setup, index) => (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {setups.slice(0, 6).map((setup) => (
               <Link
                 key={setup.title}
                 to="/setups"
-                className={`group relative overflow-hidden bg-obsidian ${index === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
+                className="group overflow-hidden rounded-lg border border-border bg-card"
               >
                 <img
                   src={setup.image}
                   alt={setup.title}
                   loading="lazy"
-                  className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="aspect-[4/3] w-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 to-transparent" />
-                <div className="absolute bottom-0 p-5 text-hero-foreground">
+                <div className="border-t border-border p-5 text-primary">
                   <p className="text-[10px] uppercase tracking-widest text-gold">
                     {setup.category}
                   </p>
@@ -536,21 +531,9 @@ function Index() {
                     key={video.id}
                     className="overflow-hidden border border-border bg-card shadow-soft"
                   >
-                    <video
+                    <VideoPreview
                       src={video.url}
-                      poster={
-                        video.url === "/media/videos/illuminated-buffet-staging.mp4"
-                          ? "/media/videos/illuminated-buffet-staging-poster.jpg"
-                          : video.url === "/media/videos/live-stalls-and-breakfast.mp4"
-                            ? "/media/videos/live-stalls-and-breakfast-poster.jpg"
-                            : undefined
-                      }
-                      muted
-                      loop
-                      playsInline
-                      controls
-                      preload="none"
-                      className="aspect-[9/16] max-h-[560px] w-full bg-muted object-cover"
+                      title={video.title || "Celebration video"}
                     />
                     <figcaption className="p-5">
                       <h3 className="font-display text-2xl">{video.title}</h3>
@@ -581,7 +564,7 @@ function Index() {
             copy="Tailored wedding catering, authentic halwai bhattis, and live palatial buffet staging across Ajmer, Pushkar, and Kishangarh."
           />
           <div className="mt-14 grid gap-6 md:grid-cols-3">
-            {destinations.map(([place, hi, img]) => {
+            {destinations.map(([place, hi]) => {
               const destinationHref =
                 place === "Ajmer"
                   ? ("/wedding-catering-ajmer" as const)
@@ -592,25 +575,12 @@ function Index() {
                 <Link
                   key={place}
                   to={destinationHref}
-                  className="group relative block aspect-[4/3] overflow-hidden rounded-sm bg-obsidian"
+                  className="location-card group"
                 >
-                  <img
-                    src={img}
-                    alt={`${place} royal wedding catering services`}
-                    loading="lazy"
-                    width={600}
-                    height={450}
-                    className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-obsidian/45 transition-colors group-hover:bg-obsidian/30" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-hero-foreground">
-                    <MapPin className="text-gold" />
-                    <h3 className="mt-2 font-display text-4xl">{place}</h3>
-                    <p className="text-gold font-medium">{hi}</p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-hero-foreground border-b border-gold pb-0.5">
-                      View Catering Services <ArrowRight className="size-3" />
-                    </span>
-                  </div>
+                  <span className="location-card-ornament" aria-hidden="true"><span />◆<span /></span>
+                  <h3 className="font-display text-4xl sm:text-5xl">{place}</h3>
+                  <p className="mt-3 text-base text-muted-foreground" lang="hi">{hi}</p>
+                  <ArrowRight className="location-card-arrow" aria-hidden="true" />
                 </Link>
               );
             })}

@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { Expand } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GalleryViewer } from "@/components/gallery-viewer";
+import { VideoPreview } from "@/components/video-preview";
 import { CategoryFilter, EmptyState, EnquiryBanner, QueryNotice } from "@/components/page-sections";
 import { PageIntro } from "@/components/site-shell";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -166,21 +167,9 @@ function Setups() {
                   key={v.id}
                   className="overflow-hidden border border-border bg-card shadow-soft"
                 >
-                  <video
+                  <VideoPreview
                     src={v.url}
-                    poster={
-                      v.url === "/media/videos/illuminated-buffet-staging.mp4"
-                        ? "/media/videos/illuminated-buffet-staging-poster.jpg"
-                        : v.url === "/media/videos/live-stalls-and-breakfast.mp4"
-                          ? "/media/videos/live-stalls-and-breakfast-poster.jpg"
-                          : undefined
-                    }
-                    muted
-                    loop
-                    playsInline
-                    controls
-                    preload="none"
-                    className="aspect-[9/16] max-h-[620px] w-full bg-muted object-cover"
+                    title={v.title || "Catering setup video"}
                   />
                   <figcaption className="p-5">
                     <p className="font-display text-2xl">{v.title}</p>
